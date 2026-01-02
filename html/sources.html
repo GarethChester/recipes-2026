@@ -1,5 +1,8 @@
 <head><script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-<script src="https://accounts.google.com/gsi/client" onload="initClient()"></script>
+
+</head>
+<body>
+  <script src="https://accounts.google.com/gsi/client" onload="initClient()"></script>
 <script>
 async function queryBigQueryRest(projectId, accessToken) {
   let tokenClient;
@@ -47,10 +50,6 @@ async function queryBigQueryRest(projectId, accessToken) {
     }
 
   }
-</script> 
-</head>
-<body>
-  <script>
     const { createApp, ref } = Vue
 
     createApp({
