@@ -117,7 +117,7 @@
                 else window.onload = initGis;
             });
 
-            const handleAuthClick = () => tokenClient.requestAccessToken();
+            const handleAuthClick = () => tokenClient.requestAccessToken({prompt:'none'});
 
             const logout = () => {
                 sessionStorage.removeItem('bq_token');
