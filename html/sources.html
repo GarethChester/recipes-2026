@@ -2,6 +2,8 @@
 
 </head>
 <body>
+   <button onclick="getToken()">Sign in and Query BigQuery</button>
+  <div id="app">{{ message }}</div>
   <script src="https://accounts.google.com/gsi/client" onload="initClient()"></script>
   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 <script>
@@ -62,6 +64,5 @@
     }
   }).mount('#app')
   </script>
-  <button onclick="getToken()">Sign in and Query BigQuery</button>
-  <div id="app">{{ message }}</div>
+ 
 </body>
