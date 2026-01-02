@@ -25,19 +25,14 @@
 <script>
   const { createApp, ref, onMounted } = Vue;
 
-    createApp({
-        setup() {
-            // CONFIGURATION
-            const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
-            const PROJECT_ID = 'recipes-46d2e';
-            
-            // STATE
-            const isLoggedIn = ref(false);
-            const loading = ref(false);
-            const errorMessage = ref(null);
-            const results = ref([]);
-            const schema = ref([]);
-            let tokenClient;
+   import { onMounted, ref } from 'vue';
+
+const results = ref([]);
+const isLoggedIn = ref(false);
+let tokenClient;
+
+const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
+const PROJECT_ID = 'YOUR_PROJECT_ID';
 
             // 1. Initialize Google Auth on Mount
             onMounted(() => {
@@ -126,8 +121,7 @@
                 isLoggedIn, loading, results, schema, errorMessage,
                 handleAuthClick, logout
             };
-        }
-    }).mount('#app');
+
 
   </script>
 
