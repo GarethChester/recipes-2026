@@ -6,7 +6,6 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-   <button onclick="getToken()">Sign in and Query BigQuery</button>
   <div id="app">
     <li v-for="(row, index) in results" :key="index">
           {{ row.f[0].v }}
@@ -102,6 +101,7 @@
                             throw new Error(data.error.message);
                         }
                     } else {
+                      console.log(results)
                         results.value = data.rows || [];
                         schema.value = data.schema.fields || [];
                     }
