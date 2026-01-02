@@ -1,0 +1,67 @@
+<head><script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+<script src="https://accounts.google.com/gsi/client" onload="initClient()"></script>
+<script>
+async function queryBigQueryRest(projectId, accessToken) {
+  let tokenClient;
+    const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
+    const PROJECT_ID = 'recipes-46d2e';
+
+    function initClient() {
+      // Initialize the token client
+      tokenClient = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: 'https://www.googleapis.com/auth/bigquery',
+        callback: (response) => {
+          if (response.access_token) {
+            // Success! We have a token from your browser login.
+            runBigQueryQuery(response.access_token);
+          }
+        },
+      });
+    }
+
+    function getToken() {
+      // This triggers the browser's "Sign in with Google" popup
+      tokenClient.requestAccessToken();
+    }
+
+    async function runBigQueryQuery(accessToken) {
+      const url = `https://bigquery.googleapis.com/bigquery/v2/projects/recipes-46d2e/queries`;
+      const query = {
+          query: "SELECT source_id, source_name FROM `recipes-46d2e.recipes.sources`",
+        useLegacySql: false
+      };
+
+      const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(query)
+      });
+
+      const data = await res.json();
+      console.log("Query Results:", data);
+      alert("Check the console for results!");
+    }
+
+
+
+  const { createApp, ref } = Vue
+
+  createApp({
+    setup() {
+      const message = ref('Hello vue!')
+      return {
+        message
+      }
+
+    }
+  }).mount('#app')
+ </script> 
+</head>
+<body>
+  <button onclick="getToken()">Sign in and Query BigQuery</button>
+  <div id="app">{{ message }}</div>
+</body>
