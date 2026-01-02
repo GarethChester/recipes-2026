@@ -7,7 +7,8 @@
 </head>
 <body>
 
-<script setup>
+<script>
+import { onMounted, ref } from 'vue';
 
 const results = ref([]);
 const isLoggedIn = ref(false);
@@ -73,7 +74,6 @@ async function runQuery(token) {
 }
 </script>
 
-<template>
   <div>
     <h1>BigQuery Explorer</h1>
     
@@ -90,4 +90,4 @@ async function runQuery(token) {
       </ul>
     </div>
   </div>
-</template>
+</body>
