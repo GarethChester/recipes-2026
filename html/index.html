@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BigQuery Standalone App</title>
+    <title>Recipe App</title>
     
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
@@ -27,34 +27,14 @@
 
 <div id="app">
     <div class="header">
-        <h2 style="margin:0; color: #5f6368;">BigQuery Client</h2>
-        <div v-if="isLoggedIn">
-            <span style="margin-right: 15px; font-size: 14px; color: #34a853;">● Connected</span>
-            <button @click="logout" style="background: #ea4335; padding: 6px 12px; font-size: 12px;">Logout</button>
-        </div>
+        <h2 style="margin:0; color: #5f6368;">Recipe App</h2>
     </div>
 
     <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
-        <p style="color: #5f6368;">Authorize this page to access BigQuery data using your Google Profile.</p>
-        <button @click="handleAuthClick">Sign in with Google</button>
+        <button @click="handleAuthClick">Sources</button>
     </div>
 
     <div v-else>
-        <div class="sql-preview">
-            <span style="color: #9aa0a6;">-- Default Sandbox Query</span><br>
-            SELECT name, SUM(number) as count <br>
-            FROM `bigquery-public-data.usa_names.usa_1910_current` <br>
-            GROUP BY 1 ORDER BY 2 DESC LIMIT 10;
-        </div>
-
-        <button @click="executeTemplate" :disabled="loading">
-            {{ loading ? 'Running...' : 'Run Template Query' }}
-        </button>
-
-        <div v-if="error" class="error-box">
-            <strong>Error:</strong> {{ error }}
-        </div>
-
         <div v-if="rows.length > 0" class="table-container">
             <table>
                 <thead>
@@ -90,29 +70,30 @@
             let tokenClient;
 
             // Initialize Google Identity Services
-            const initGis = () => {
-                tokenClient = google.accounts.oauth2.initTokenClient({
-                    client_id: CLIENT_ID,
-                    scope: 'https://www.googleapis.com/auth/bigquery.readonly',
-                    callback: (resp) => {
-                        if (resp.access_token) {
-                            sessionStorage.setItem('bq_token', resp.access_token);
-                            isLoggedIn.value = true;
-                            executeTemplate();
-                        }
-                    },
-                });
-
-                // Auto-check session storage
-                const existingToken = sessionStorage.getItem('bq_token');
-                if (existingToken) {
-                    isLoggedIn.value = true;
-                    executeTemplate();
-                }
-            };
 
             onMounted(() => {
-                // Ensure google script is ready
+                const initGis = () => {
+                    tokenClient = google.accounts.oauth2.initTokenClient({
+                        client_id: CLIENT_ID,
+                        scope: 'https://www.googleapis.com/auth/bigquery.readonly',
+                        callback: (resp) => {
+                            if (resp.access_token) {
+                                sessionStorage.setItem('bq_token', resp.access_token);
+                                isLoggedIn.value = true;
+                                executeTemplate();
+                            } else if (resp.error === 'interaction_required') {
+                                // This is expected if the user needs to click a button
+                                console.log("Silent auth failed: User interaction required.");
+                                isLoggedIn.value = false; 
+                            }
+                        },
+                    });
+
+                    // 1. First, try to get a token SILENTLY
+                    // This won't trigger a popup.
+                    tokenClient.requestAccessToken({ prompt: 'none' });
+                };
+
                 if (window.google) initGis();
                 else window.onload = initGis;
             });
