@@ -6,33 +6,28 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
- <div>
-    <h1>BigQuery Explorer</h1>
-    
-    <button v-if="!isLoggedIn" @click="handleAuthClick">
-      Login with Google
-    </button>
-    
-    <div v-else>
-      <p>Logged In ✅</p>
-      <ul>
-        <li v-for="(row, index) in results" :key="index">
+  <div id="app">
+    <li v-for="(row, index) in results" :key="index">
           {{ row.f[0].v }}
         </li>
-      </ul>
-    </div>
+
   </div>
 <script>
   const { createApp, ref, onMounted } = Vue;
 
-   import { onMounted, ref } from 'vue';
-
-const results = ref([]);
-const isLoggedIn = ref(false);
-let tokenClient;
-
-const CLIENT_ID = 'YOUR_CLIENT_ID.apps.googleusercontent.com';
-const PROJECT_ID = 'YOUR_PROJECT_ID';
+    createApp({
+        setup() {
+            // CONFIGURATION
+            const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
+            const PROJECT_ID = 'recipes-46d2e';
+            
+            // STATE
+            const isLoggedIn = ref(false);
+            const loading = ref(false);
+            const errorMessage = ref(null);
+            const results = ref([]);
+            const schema = ref([]);
+            let tokenClient;
 
             // 1. Initialize Google Auth on Mount
             onMounted(() => {
@@ -121,9 +116,98 @@ const PROJECT_ID = 'YOUR_PROJECT_ID';
                 isLoggedIn, loading, results, schema, errorMessage,
                 handleAuthClick, logout
             };
-
+        }
+    }).mount('#app');
 
   </script>
 
  
 </body>
+
+
+
+<script setup>
+import { onMounted, ref } from 'vue';
+
+const results = ref([]);
+const isLoggedIn = ref(false);
+let tokenClient;
+
+const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
+const PROJECT_ID = 'recipes-46d2e';
+
+onMounted(() => {
+  // 1. Initialize the Google Token Client
+  if (window.google) {
+    tokenClient = window.google.accounts.oauth2.initTokenClient({
+      client_id: CLIENT_ID,
+      scope: 'https://www.googleapis.com/auth/bigquery',
+      callback: (response) => {
+        if (response.access_token) {
+          sessionStorage.setItem('google_access_token', response.access_token);
+          isLoggedIn.value = true;
+          runQuery(response.access_token);
+        }
+      },
+    });
+
+    // 2. Check for an existing session token immediately
+    const cachedToken = sessionStorage.getItem('google_access_token');
+    if (cachedToken) {
+      isLoggedIn.value = true;
+      runQuery(cachedToken);
+    }
+  }
+});
+
+// 3. The trigger for the popup
+const handleAuthClick = () => {
+  tokenClient.requestAccessToken({prompt:"none"});
+};
+
+async function runQuery(token) {
+  try {
+    const res = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources`",
+        useLegacySql: false
+      })
+    });
+    
+    const data = await res.json();
+    if (data.rows) {
+      results.value = data.rows;
+    } else if (data.error && data.error.code === 401) {
+      // Token expired! Wipe it and update UI
+      sessionStorage.removeItem('google_access_token');
+      isLoggedIn.value = false;
+    }
+  } catch (err) {
+    console.error("Query failed", err);
+  }
+}
+</script>
+
+<template>
+  <div>
+    <h1>BigQuery Explorer</h1>
+    
+    <button v-if="!isLoggedIn" @click="handleAuthClick">
+      Login with Google
+    </button>
+    
+    <div v-else>
+      <p>Logged In ✅</p>
+      <ul>
+        <li v-for="(row, index) in results" :key="index">
+          {{ row.f[0].v }}
+        </li>
+      </ul>
+    </div>
+  </div>
+</template>
