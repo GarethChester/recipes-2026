@@ -6,11 +6,21 @@
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 </head>
 <body>
-  <div id="app">
-    <li v-for="(row, index) in results" :key="index">
+ <div>
+    <h1>BigQuery Explorer</h1>
+    
+    <button v-if="!isLoggedIn" @click="handleAuthClick">
+      Login with Google
+    </button>
+    
+    <div v-else>
+      <p>Logged In ✅</p>
+      <ul>
+        <li v-for="(row, index) in results" :key="index">
           {{ row.f[0].v }}
         </li>
-
+      </ul>
+    </div>
   </div>
 <script>
   const { createApp, ref, onMounted } = Vue;
