@@ -164,6 +164,8 @@
             return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate };
         }
     }).mount('#app');
+
+    onMounted(handleAuthClick())
 </script>
 
 </body>
