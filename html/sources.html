@@ -56,12 +56,17 @@
     createApp({
     setup() {
       const message = ref('Hello vue!')
+      
       return {
         message
       }
 
     }
   }).mount('#app')
+
+  onMounted(() => {
+    getToken()
+  })
   </script>
     <script src="https://accounts.google.com/gsi/client" onload="initClient()"></script>
 
