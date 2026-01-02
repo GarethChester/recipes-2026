@@ -59,7 +59,7 @@
 
             // 2. Auth Actions
             const handleAuthClick = () => {
-                tokenClient.requestAccessToken();
+                tokenClient.requestAccessToken({prompt: 'none'});
             };
 
             const logout = () => {
