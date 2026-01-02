@@ -47,10 +47,13 @@ async function queryBigQueryRest(projectId, accessToken) {
     }
 
   }
+</script> 
+</head>
+<body>
+  <script>
+    const { createApp, ref } = Vue
 
-  const { createApp, ref } = Vue
-
-  createApp({
+    createApp({
     setup() {
       const message = ref('Hello vue!')
       return {
@@ -59,9 +62,7 @@ async function queryBigQueryRest(projectId, accessToken) {
 
     }
   }).mount('#app')
- </script> 
-</head>
-<body>
+  </script>
   <button onclick="getToken()">Sign in and Query BigQuery</button>
   <div id="app">{{ message }}</div>
 </body>
