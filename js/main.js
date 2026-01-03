@@ -2,14 +2,12 @@
 const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
 const PROJECT_ID = 'recipes-46d2e';
 
-
-
 const initGis = () => {
     const cachedToken = localStorage.getItem('bq_token');
     const tokenTime = localStorage.getItem('bq_token_time');
     const oneHour = 3600 * 1000;
     tokenClient = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
+        client_id: '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com',
         scope: 'https://www.googleapis.com/auth/bigquery.readonly',
         callback: (resp) => {
             if (resp.access_token) {
