@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Recipes - Cookbooks</title>
+    <title>Recipes - All Recipes</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
         type="text/css">
@@ -33,7 +33,6 @@
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
-
                 <div v-else>
                     <div v-if="rows.length > 0" class="table-container">
                         <table>
