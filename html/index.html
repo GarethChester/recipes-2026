@@ -48,7 +48,7 @@
                     <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch results.</p>
                 </div>
                 <div class="q-pa-md">
-                    RECIPES PLACEHOLDER
+                    RECIPESs PLACEHOLDER
                 </div>
             </q-page-container>
         </q-layout>
@@ -158,11 +158,12 @@
                             schema.value = data.schema.fields;
                             console.log(data.rows)
                             console.log(data.rows.map(function(row) {return row}))
-                            rows = data.rows.map(function(row) {
+                            const mappedRows = data.rows.map(function(row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A', source: row.f[2]?.v || -1
                                 }
                             }) || [];
+                            rows.value = mappedRows
                             console.log(rows);
                         }
                     } catch (e) {
