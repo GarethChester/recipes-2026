@@ -37,15 +37,11 @@
     <div v-else>
         <div v-if="rows.length > 0" class="table-container">
             <table>
-                <thead>
-                    <tr>
-                        <th v-for="field in schema" :key="field.name">{{ field.name }}</th>
-                    </tr>
-                </thead>
                 <tbody>
                     <tr v-for="(row, i) in rows" :key="i">
-                        <td v-for="(cell, j) in row.f" :key="j">{{ cell.v }}</td>
-                        <td v-for="(cell, j) in row.f" :key="j">{{ row.f[0].v }}</td>
+                        <td>
+                            <a :href="'recipe_list.html?source_id=' + row.f[0].v">{{ row.f[1].v }}</a>
+                        </td>
                     </tr>
                 </tbody>
             </table>
