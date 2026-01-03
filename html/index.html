@@ -45,6 +45,7 @@
                 <tbody>
                     <tr v-for="(row, i) in rows" :key="i">
                         <td v-for="(cell, j) in row.f" :key="j">{{ cell.v }}</td>
+                        <td v-for="(cell, j) in row.f" :key="j">{{ row.f[0].v }}</td>
                     </tr>
                 </tbody>
             </table>
