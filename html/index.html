@@ -154,6 +154,7 @@
                         } else {
                             schema.value = data.schema.fields;
                             rows.value = data.rows || []
+                            console.log(rows)
                             rows = rows.map(row => {
                                 const jsonRow = {};
                                 row.f.forEach((cell,index) => {
@@ -163,7 +164,9 @@
                                 });
                                 return jsonRow;
                                 });
-                            };                        
+                            };    
+                                                        console.log(rows)
+                    
                     } catch (e) {
                         error.value = e.message;
                     } finally {
