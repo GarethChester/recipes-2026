@@ -56,7 +56,12 @@
 
     createApp({
         setup() {
-            
+            const isLoggedIn = ref(false);
+            const loading = ref(false);
+            const error = ref(null);
+            const rows = ref([]);
+            const schema = ref([]);
+            let tokenClient;
             // Initialize Google Identity Services
 
             onMounted(() => {               
