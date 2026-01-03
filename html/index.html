@@ -33,6 +33,9 @@
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
+                <div class="q-pa-md">
+
+                </div>
                 <div v-else>
                     <div v-if="rows.length > 0" class="table-container">
                         <table>
@@ -150,8 +153,17 @@
                             else throw new Error(data.error.message);
                         } else {
                             schema.value = data.schema.fields;
-                            rows.value = data.rows || [];
-                        }
+                            rows.value = data.rows || []
+                            rows = rows.map(row => {
+                                const jsonRow = {};
+                                row.f.forEach((cell,index) => {
+                                    const fieldName = schemaFields[index].name;
+                                    const fileValue = cell.v
+                                    jsonRow[fieldName] = fieldValue;
+                                });
+                                return jsonRow;
+                                });
+                            };                        
                     } catch (e) {
                         error.value = e.message;
                     } finally {
