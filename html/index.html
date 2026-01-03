@@ -72,7 +72,7 @@
                 const isLoggedIn = ref(false);
                 const loading = ref(false);
                 const error = ref(null);
-                const rows = ref([]);
+                const rows = [];
                 const schema = ref([]);
                 let tokenClient;
                 const params = new Proxy(new URLSearchParams(window.location.search), {
