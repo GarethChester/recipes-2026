@@ -73,6 +73,9 @@
 
             onMounted(() => {
                 const initGis = () => {
+                    const cachedToken = localStorage.getItem('bq_token');
+                    const tokenTime = localStorage.getItem('bq_token_time');
+                    const oneHour = 3600 * 1000;
                     tokenClient = google.accounts.oauth2.initTokenClient({
                         client_id: CLIENT_ID,
                         scope: 'https://www.googleapis.com/auth/bigquery.readonly',
@@ -88,10 +91,15 @@
                             }
                         },
                     });
-
-                    // 1. First, try to get a token SILENTLY
-                    // This won't trigger a popup.
-                    tokenClient.requestAccessToken({ prompt: 'none' });
+                    if (cachedToken && (Date.now() - tokenTime < oneHour)) {
+                        // Token is still fresh! No popup needed.
+                        isLoggedIn.value = true;
+                        executeTemplate();
+                    } else {
+                        // Token is missing or expired. 
+                        // We MUST ask the user to click the button or try one silent check.
+                        tokenClient.requestAccessToken({ prompt: 'none' });
+                    }
                 };
 
                 if (window.google) initGis();
