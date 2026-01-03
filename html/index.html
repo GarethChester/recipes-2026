@@ -13,38 +13,42 @@
 
 <body>
     <div id="app">
-        <q-header elevated class="bg-primary text-white" height-hint="98">
-            <q-toolbar>
-                <q-toolbar-title>
-                    <q-avatar>
-                        <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-                    </q-avatar>
-                    Recipes
-                </q-toolbar-title>
-            </q-toolbar>
-        </q-header>
-        <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
-            <button @click="handleAuthClick">Sources</button>
-        </div>
-
-        <div v-else>
-            <div v-if="rows.length > 0" class="table-container">
-                <table>
-                    <tbody>
-                        <tr v-for="(row, i) in rows" :key="i">
-                            <td>
-                                <a :href="'recipe.html?recipe_id=' + row.f[0].v">{{ row.f[1].v }}</a>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+        <q-layout view="hHh lpR fFf">
+            <q-header elevated class="bg-primary text-white" height-hint="98">
+                <q-toolbar>
+                    <q-toolbar-title>
+                        <q-avatar>
+                            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+                        </q-avatar>
+                        Recipes
+                    </q-toolbar-title>
+                </q-toolbar>
+            </q-header>
+            <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
+                <button @click="handleAuthClick">Sources</button>
             </div>
-            <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch
-                results.</p>
-            <div>
-                <a :href="'add_recipe.html'">Add Recipe</a>
-            </div>
-        </div>
+            <q-page-container>
+                <div v-else>
+                    <div v-if="rows.length > 0" class="table-container">
+                        <table>
+                            <tbody>
+                                <tr v-for="(row, i) in rows" :key="i">
+                                    <td>
+                                        <a :href="'recipe.html?recipe_id=' + row.f[0].v">{{ row.f[1].v }}</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query
+                        to fetch
+                        results.</p>
+                    <div>
+                        <a :href="'add_recipe.html'">Add Recipe</a>
+                    </div>
+                </div>
+            </q-page-container>
+        </q-layout>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.umd.prod.js"></script>
