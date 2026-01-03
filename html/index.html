@@ -29,13 +29,7 @@
                     <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
                 </q-tabs>
             </q-header>
-            <q-page-container>               
-                <div class="q-pa-md">
-                    <q-table
-                        title="Recipa"
-                        :rows="rows"
-                    ></q-table>
-                </div>
+            <q-page-container>                             
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
