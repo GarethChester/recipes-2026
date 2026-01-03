@@ -51,6 +51,7 @@
                     <q-table
                         title="Recipaas"
                         :rows="rows"
+                        :columns="columns"
                     >
                         <template v-slot:body="props">
                             <q-tr :props="props" @click="onRowClick(props.row)">
@@ -178,6 +179,10 @@
         app.use(Quasar)
         Quasar.Lang.set(Quasar.Lang.enGB)
         app.mount('#app')
+
+        columns: [
+            {name: 'recipe', label: '', field: row => row.f[1].v, align: 'left', sortable: true}
+        ]
     </script>
 
 </body>
