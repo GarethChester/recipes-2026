@@ -39,11 +39,11 @@
                     </tbody>
                 </table>
             </div>
+            <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch
+                results.</p>
             <div>
                 <a :href="'add_recipe.html'">Add Recipe</a>
             </div>
-            <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch
-                results.</p>
         </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
