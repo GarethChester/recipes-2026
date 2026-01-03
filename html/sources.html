@@ -12,7 +12,6 @@
 </head>
 
 <body>
-
     <div id="app">
         <q-layout view="hHh lpR fFf">
             <q-header elevated class="bg-primary text-white" height-hint="98">
@@ -61,7 +60,7 @@
     <script>
         const { createApp, ref, onMounted } = Vue;
 
-        createApp({
+        const app = Vue.createApp({
             setup() {
                 // !!! REPLACE THESE TWO VALUES !!!
                 const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
@@ -162,8 +161,11 @@
 
                 return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate };
             }
-        }).mount('#app');
-
+        })
+        
+        app.use(Quasar)
+        Quasar.Lang.set(Quasar.Lang.enGB)
+        app.mount('#app')
     </script>
 
 </body>
