@@ -91,6 +91,7 @@
                             }
                         },
                     });
+                    console.log(cachedToken)
                     if (cachedToken && (Date.now() - tokenTime < oneHour)) {
                         // Token is still fresh! No popup needed.
                         console.log('win')
