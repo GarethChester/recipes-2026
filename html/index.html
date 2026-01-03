@@ -82,6 +82,7 @@
                         callback: (resp) => {
                             if (resp.access_token) {
                                 localStorage.setItem('bq_token', resp.access_token);
+                                localStorage.setItem('bq_token_time', Date.now())
                                 isLoggedIn.value = true;
                                 executeTemplate();
                             } else if (resp.error === 'interaction_required') {
@@ -92,7 +93,7 @@
                         },
                     });
                     console.log(cachedToken)
-                    console.log(Date.now)
+                    console.log(Date.now())
                     console.log(tokenTime)
                     if (cachedToken && (Date.now() - tokenTime < oneHour)) {
                         // Token is still fresh! No popup needed.
