@@ -33,9 +33,6 @@
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
-                <div class="q-pa-md">
-
-                </div>
                 <div v-else>
                     <div v-if="rows.length > 0" class="table-container">
                         <table>
@@ -49,6 +46,9 @@
                         </table>
                     </div>
                     <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch results.</p>
+                </div>
+                <div class="q-pa-md">
+
                 </div>
             </q-page-container>
         </q-layout>
