@@ -47,6 +47,14 @@
                     </div>
                     <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch results.</p>
                 </div>
+                <div class="q-pa-md">
+                    <q-table
+                        title="Recipes"
+                        :rows="rows"
+                        :columns="schema"
+                        row-key="name"
+                    />
+                </div>
             </q-page-container>
         </q-layout>
     </div>
