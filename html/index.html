@@ -24,10 +24,10 @@
                     </q-toolbar-title>
                 </q-toolbar>
             </q-header>
-            <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
-                <button @click="handleAuthClick">Sources</button>
-            </div>
             <q-page-container>
+                <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
+                    <button @click="handleAuthClick">Sources</button>
+                </div>
                 <div v-else>
                     <div v-if="rows.length > 0" class="table-container">
                         <table>
