@@ -157,7 +157,12 @@
                         } else {
                             schema.value = data.schema.fields;
                             console.log(data.rows)
-                            rows = data.rows.map(function(row) {return {id: row.f[0].v, name: row.f[1].v, source: row.f[2].v}}) || [];
+                            console.log(data.rows.map(function(row) {return row}))
+                            rows = data.rows.map(function(row) {
+                                return {
+                                    id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A', source: row.f[2]?.v || -1
+                                }
+                            }) || [];
                             console.log(rows);
                         }
                     } catch (e) {
