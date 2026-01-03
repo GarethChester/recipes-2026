@@ -33,22 +33,25 @@
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
+                <div class="q-pa-md">
+                    <q-table
+                        title="Recipes"
+                        :rows="rows"
+                    ></q-table>
+                </div>
                 <div v-else>
                     <div v-if="rows.length > 0" class="table-container">
                         <table>
                             <tbody>
-                                <tr v-for="(row) in rows" :key="i">
+                                <tr v-for="(row, i) in rows" :key="i">
                                     <td>
-                                        <a :href="'recipe.html?recipe_id=' + row[recipe_id]">{{ row[recipe_name]}}</a>
+                                        <a :href="'recipe.html?recipe_id=' + row.f[0].v">{{ row.f[1].v }}</a>
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
                     <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query to fetch results.</p>
-                </div>
-                <div class="q-pa-md">
-
                 </div>
             </q-page-container>
         </q-layout>
@@ -153,20 +156,8 @@
                             else throw new Error(data.error.message);
                         } else {
                             schema.value = data.schema.fields;
-                            rows.value = data.rows || []
-                            console.log(rows)
-                            rows = rows.map(row => {
-                                const jsonRow = {};
-                                row.f.forEach((cell,index) => {
-                                    const fieldName = schemaFields[index].name;
-                                    const fileValue = cell.v
-                                    jsonRow[fieldName] = fieldValue;
-                                });
-                                return jsonRow;
-                                });
-                            };    
-                                                        console.log(rows)
-                    
+                            rows.value = data.rows || [];
+                        }
                     } catch (e) {
                         error.value = e.message;
                     } finally {
