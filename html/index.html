@@ -40,9 +40,9 @@
                     <div v-if="rows.length > 0" class="table-container">
                         <table>
                             <tbody>
-                                <tr v-for="(row, i) in rows" :key="i">
+                                <tr v-for="(row) in rows" :key="i">
                                     <td>
-                                        <a :href="'recipe.html?recipe_id=' + row.f[0].v">{{ row.f[1].v }}</a>
+                                        <a :href="'recipe.html?recipe_id=' + row[recipe_id]">{{ row[recipe_name]}}</a>
                                     </td>
                                 </tr>
                             </tbody>
