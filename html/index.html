@@ -156,10 +156,8 @@
                             else throw new Error(data.error.message);
                         } else {
                             schema.value = data.schema.fields;
-                            rows.value = data.rows || [];
-                            console.log(rows)
-                            rows = rows._rawValue.map(function(row) {return {id: row.f[0].v, name: row.f[1].v, source: row.f[2].v}}) ;
-                            console.log(rows)
+                            rows.value = data.rows._rawValue.map(function(row) {return {id: row.f[0].v, name: row.f[1].v, source: row.f[2].v}}) || [];
+                            console.log(rows);
                         }
                     } catch (e) {
                         error.value = e.message;
