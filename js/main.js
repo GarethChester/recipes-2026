@@ -1,3 +1,14 @@
+// !!! REPLACE THESE TWO VALUES !!!
+const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
+const PROJECT_ID = 'recipes-46d2e';
+
+const isLoggedIn = ref(false);
+const loading = ref(false);
+const error = ref(null);
+const rows = ref([]);
+const schema = ref([]);
+let tokenClient;
+
 const initGis = () => {
     const cachedToken = localStorage.getItem('bq_token');
     const tokenTime = localStorage.getItem('bq_token_time');
