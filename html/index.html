@@ -78,7 +78,7 @@
                         scope: 'https://www.googleapis.com/auth/bigquery.readonly',
                         callback: (resp) => {
                             if (resp.access_token) {
-                                sessionStorage.setItem('bq_token', resp.access_token);
+                                localStorage.setItem('bq_token', resp.access_token);
                                 isLoggedIn.value = true;
                                 executeTemplate();
                             } else if (resp.error === 'interaction_required') {
@@ -101,13 +101,13 @@
             const handleAuthClick = () => tokenClient.requestAccessToken({prompt:'none'});
 
             const logout = () => {
-                sessionStorage.removeItem('bq_token');
+                localStorage.removeItem('bq_token');
                 isLoggedIn.value = false;
                 rows.value = [];
             };
 
             const executeTemplate = async () => {
-                const token = sessionStorage.getItem('bq_token');
+                const token = localStorage.getItem('bq_token');
                 if (!token) return;
 
                 loading.value = true;
