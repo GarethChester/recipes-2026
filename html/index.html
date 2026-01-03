@@ -134,7 +134,7 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
-                            query: "SELECT recipe_id, recipe_name, source_id from `recipes-46d2e.recipes.recipe`" + source_id == 0 ? '' : " where source_id = " + source_id,
+                            query: "SELECT recipe_id, recipe_name, source_id from `recipes-46d2e.recipes.recipes`" + source_id == 0 ? '' : " where source_id = " + source_id,
                             useLegacySql: false
                         })
                     });
