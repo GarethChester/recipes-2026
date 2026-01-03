@@ -70,7 +70,10 @@
                 // !!! REPLACE THESE TWO VALUES !!!
                 const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
                 const PROJECT_ID = 'recipes-46d2e';
-
+                const columns = [
+                    {name: 'id', label: '', field: row => row.f[0].v, align: 'left', sortable: true},
+                    {name: 'recipe', label: '', field: row => row.f[1].v, align: 'left', sortable: true}
+                ]
                 const isLoggedIn = ref(false);
                 const loading = ref(false);
                 const error = ref(null);
@@ -175,10 +178,6 @@
         Quasar.Lang.set(Quasar.Lang.enGB)
         app.mount('#app')
 
-        columns: [
-            {name: 'id', label: '', field: row => row.f[0].v, align: 'left', sortable: true},
-            //{name: 'recipe', label: '', field: row => row.f[1].v, align: 'left', sortable: true}
-        ]
     </script>
 
 </body>
