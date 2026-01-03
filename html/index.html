@@ -3,32 +3,26 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
         type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/animate.css@^4.0.0/animate.min.css" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.prod.css" rel="stylesheet" type="text/css">
-    <q-header elevated class="bg-primary text-white" height-hint="98">
-        <q-toolbar>
-            <q-toolbar-title>
-                <q-avatar>
-                    <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
-                </q-avatar>
-                Recipes
-            </q-toolbar-title>
-        </q-toolbar>
-    </q-header>
 </head>
 
 <body>
-
     <div id="app">
-        <div class="header">
-            <h2 style="margin:0; color: #5f6368;">Recipe App</h2>
-        </div>
-
+        <q-header elevated class="bg-primary text-white" height-hint="98">
+            <q-toolbar>
+                <q-toolbar-title>
+                    <q-avatar>
+                        <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+                    </q-avatar>
+                    Recipes
+                </q-toolbar-title>
+            </q-toolbar>
+        </q-header>
         <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
             <button @click="handleAuthClick">Sources</button>
         </div>
