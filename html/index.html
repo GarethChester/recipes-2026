@@ -51,9 +51,13 @@
                     <q-table
                         title="Recipes"
                         :rows="rows"
-                        :columns="schema"
-                        row-key="name"
-                    />
+                    >
+                        <template v-slot:body="props">
+                            <q-tr :props="props" @click="onRowClick(props.row)">
+                                <q-td key="name" :props="props">{{props.row.f[1].v}}</q-td>
+                            </q-tr>
+                        </template>
+                    </q-table>
                 </div>
             </q-page-container>
         </q-layout>
