@@ -23,6 +23,11 @@
                         Recipes
                     </q-toolbar-title>
                 </q-toolbar>
+                <q-tabs align="left">
+                    <q-route-tab href="sources.html">Sources</q-route-tab>
+                    <q-route-tab href="index.html">All Recipes</q-route-tab>
+                    <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
+                </q-tabs>
             </q-header>
             <q-page-container>
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
@@ -44,7 +49,6 @@
                         to fetch
                         results.</p>
                     <div>
-                        <a :href="'add_recipe.html'">Add Recipe</a>
                     </div>
                 </div>
             </q-page-container>
