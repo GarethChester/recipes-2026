@@ -30,7 +30,6 @@
                 </q-tabs>
             </q-header>
             <q-page-container>                             
-                <div>searchText {{searchText}}</div>
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>                
@@ -62,7 +61,7 @@
                         <template v-slot:body="props">
                             <q-tr :props="props">
                                 <q-td key="name" :props="props">
-                                    <h6><a :href="'recipe.html?id' + props.row.id">{{props.row.name}}</a></h6>
+                                    <a :href="'recipe.html?id' + props.row.id">{{props.row.name}}</a>
                                 </q-td>
                             </q-tr>
                         </template>

@@ -29,24 +29,42 @@
                     <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
                 </q-tabs>
             </q-header>
-            <q-page-container>
+            <q-page-container>                             
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
-                </div>
-                <div v-else>
-                    <div v-if="rows.length > 0" class="table-container">
-                        <table>
-                            <tbody>
-                                <tr v-for="(row, i) in rows" :key="i">
-                                    <td>
-                                        <a :href="'index.html?source_id=' + row.f[0].v">{{ row.f[1].v }}</a>
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                    <p v-else-if="!loading" style="color: #70757a; margin-top: 20px;">No data to display. Run the query
-                        to fetch results.</p>
+                </div>                
+                <div class="q-pa-md" v-else>
+                    <q-table
+                        flat
+                        :rows="rows"
+                        row-key="id"
+                        :columns="[
+                            { name: 'id', label: 'ID', field: 'id', align: 'left' },
+                            { name: 'name', label: 'Cookbook/Website Name', field: 'name', align: 'left' },
+                        ]"
+                        title="Cookbooks/Websites"
+                        rowsPerPage ="20"
+                        sortBy="name"
+                        visible-columns="['name']"
+                        :filter="searchText"
+                        hide-header
+                        dense
+                    >
+                        <template v-slot:top-right>
+                            <q-input borderless dense debounce="300" v-model="searchText" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                            </q-input>
+                        </template>
+                        <template v-slot:body="props">
+                            <q-tr :props="props">
+                                <q-td key="name" :props="props">
+                                    <a :href="'index.html?source_id=' + props.row.id">{{props.row.name}}</a>
+                                </q-td>
+                            </q-tr>
+                        </template>
+                    </q-table>
                 </div>
             </q-page-container>
         </q-layout>
@@ -64,7 +82,7 @@
                 // !!! REPLACE THESE TWO VALUES !!!
                 const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
                 const PROJECT_ID = 'recipes-46d2e';
-
+                const searchText = ref('');
                 const isLoggedIn = ref(false);
                 const loading = ref(false);
                 const error = ref(null);
@@ -149,7 +167,12 @@
                             else throw new Error(data.error.message);
                         } else {
                             schema.value = data.schema.fields;
-                            rows.value = data.rows || [];
+                            const mappedRows = data.rows.map(function(row) {
+                                return {
+                                    id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
+                                }
+                            }) || [];
+                            rows.value = mappedRows;
                         }
                     } catch (e) {
                         error.value = e.message;
@@ -158,7 +181,7 @@
                     }
                 };
 
-                return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate };
+                return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate, searchText };
             }
         })
         
