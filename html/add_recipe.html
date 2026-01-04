@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Recipes - All Recipes</title>
+    <title>Recipes - Add Recipe</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
         type="text/css">
@@ -29,12 +29,22 @@
                     <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
                 </q-tabs>
             </q-header>
-            <q-page-container>                             
+            <q-page-container>
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
-                </div>                
+                </div>
                 <div class="q-pa-md" v-else>
-                    <q-select outlined v-model="selectedSource" label="Cookbook" :options="sourceOptions" option-label="name" option-value="id"/>
+                    <q-select outlined v-model="selectedSource" label="Cookbook" :options="sourceOptions"
+                        option-label="name" option-value="id" use-input fill-input input-debounce="0" @filter="filterFn"
+                        @input-value="setModel">
+                        <template v-slot:no-option>
+                            <q-item>
+                                <q-item-section class="text-grey">
+                                    No results
+                                </q-item-section>
+                            </q-item>
+                        </template>
+                    </q-select>
                 </div>
             </q-page-container>
         </q-layout>
@@ -139,12 +149,12 @@
                             else throw new Error(data.error.message);
                         } else {
                             schema.value = data.schema.fields;
-                            const mappedRows = data.rows.map(function(row) {
+                            const mappedRows = data.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
-                            mappedRows.push({id:-1, name: 'New Cookbook'})
+                            mappedRows.push({ id: -1, name: 'New Cookbook' })
                             sourceOptions.value = mappedRows;
                         }
                     } catch (e) {
@@ -154,10 +164,31 @@
                     }
                 };
 
-                return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate, searchText, sourceOptions, selectedSource };
+                return {
+                    isLoggedIn,
+                    loading,
+                    error,
+                    rows,
+                    schema,
+                    handleAuthClick,
+                    logout,
+                    executeTemplate,
+                    searchText,
+                    sourceOptions,
+                    selectedSource,
+                    filterFn(val, update, abort) {
+                        update(() => {
+                            const needle = val.toLocaleLowerCase()
+                            options.value = stringOptions.filter(v => v.toLocaleLowerCase().indexOf(needle) > -1)
+                        })
+                    },
+                    setModel(val) {
+                        model.value = val
+                    }
+                }
             }
-        })
-        
+        });
+
         app.use(Quasar)
         Quasar.Lang.set(Quasar.Lang.enGB)
         app.mount('#app')
