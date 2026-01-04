@@ -79,6 +79,7 @@
                 const loadingGemini = ref(false)
                 const recipeDetails = ref(false)
                 const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+                const result = ref([])
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -212,8 +213,8 @@
                         body: JSON.stringify(payload)
                     });
 
-                    const result = await response.json();
-                    console.log(result.candidates[0].content.parts[0].text);
+                    result.value = await response.json();
+                    console.log(result.valuecandidates[0].content.parts[0].text);
                 };
 
                 return {
