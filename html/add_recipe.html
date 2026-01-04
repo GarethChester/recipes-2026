@@ -84,7 +84,7 @@
                 const options = ref(sourceOptions)
                 const recipePicture = ref(null)
                 const loadingGemini = ref(false)
-                const menuDetails = ref(false)
+                const recipeDetails = ref(false)
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -229,6 +229,8 @@
                     searchText,
                     selectedSource,
                     recipePicture,
+                    loadingGemini,
+                    recipeDetails,
                     filterFn(val, update, abort) {
                         update(() => {
                             const needle = val.toLocaleLowerCase()
@@ -238,6 +240,7 @@
                     setModel(val) {
                         model.value = val
                     },
+                    sendToGemini
                 }
             }
         });
