@@ -55,6 +55,7 @@
 
 
     <script>
+        sourceOptions = []
         const { createApp, ref, onMounted } = Vue;
 
         const app = Vue.createApp({
@@ -69,7 +70,6 @@
                 const rows = ref([]);
                 const schema = ref([]);
                 const selectedSource = ref(null);
-                const sourceOptions = ref([]);
                 const model = ref(null)
                 const options = ref(sourceOptions)
                 let tokenClient;
@@ -157,7 +157,7 @@
                                 }
                             }) || [];
                             mappedRows.push({ id: -1, name: 'New Cookbook' })
-                            sourceOptions.value = mappedRows;
+                            sourceOptions = mappedRows;
                         }
                     } catch (e) {
                         error.value = e.message;
@@ -178,7 +178,6 @@
                     logout,
                     executeTemplate,
                     searchText,
-                    sourceOptions,
                     selectedSource,
                     filterFn(val, update, abort) {
                         update(() => {
