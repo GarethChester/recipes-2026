@@ -99,7 +99,7 @@
                         const oneHour = 3600 * 1000;
                         tokenClient = google.accounts.oauth2.initTokenClient({
                             client_id: CLIENT_ID,
-                            scope: 'https://www.googleapis.com/auth/bigquery.readonly',
+                            scope: 'https://www.googleapis.com/auth/bigquery https://www.googleapis.com/auth/generative-language.retriever',
                             callback: (resp) => {
                                 if (resp.access_token) {
                                     localStorage.setItem('bq_token', resp.access_token);
