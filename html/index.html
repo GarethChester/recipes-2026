@@ -47,8 +47,15 @@
                         rowsPerPage ="20"
                         sortBy="name"
                         visible-columns="['name']"
-                        hide-header
+                        :filter="searchText"
                     >
+                        <template v-slot:top-right>
+                            <q-input borderless dense debounce="300" v-model="searchText" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                            </q-input>
+                        </template>
                         <template v-slot:body="props">
                             <q-tr :props="props">
                                 <q-td key="name" :props="props">
@@ -82,6 +89,7 @@
                 const error = ref(null);
                 const rows = ref([]);
                 const schema = ref([]);
+                var searchText = ref('');
                 let tokenClient;
                 const params = new Proxy(new URLSearchParams(window.location.search), {
                     get: (searchParams, prop) => searchParams.get(prop),
