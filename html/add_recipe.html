@@ -177,7 +177,6 @@
 
                 function sendToGemini() {
                     loadingGemini.value = true
-                    const genai = new GenAI.GenerativeLanguageClient();
                     const reader = new FileReader();
                     reader.onload = async (e) => {
                         const arrayBuffer = e.target.result;
