@@ -30,7 +30,7 @@
                 </q-tabs>
             </q-header>
             <q-page-container>                             
-                <div>{{searchText}}</div>
+                <div>searchText {{searchText}}</div>
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>                
