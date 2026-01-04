@@ -182,7 +182,7 @@
                     filterFn(val, update, abort) {
                         update(() => {
                             const needle = val.toLocaleLowerCase()
-                            options.value = sourceOptions.filter(v => v.toLocaleLowerCase().indexOf(needle) > -1)
+                            options.value = sourceOptions.filter(v => v.name.toLocaleLowerCase().indexOf(needle) > -1)
                         })
                     },
                     setModel(val) {
