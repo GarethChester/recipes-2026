@@ -34,7 +34,7 @@
                     <button @click="handleAuthClick">Sources</button>
                 </div>                
                 <div class="q-pa-md" v-else>
-                    <q-select outlined v-model="selectedSource" label="Cookbook" :options="sourceOptions" option-label="name" option-value="id" />
+                    <q-select outlined v-model="selectedSource" label="Cookbook" :options="sourceOptions" option-label="name" option-value="id"/>
                 </div>
             </q-page-container>
         </q-layout>
@@ -144,6 +144,7 @@
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
+                            mappedRows.push({id:-1, name: 'New Cookbook'})
                             sourceOptions.value = mappedRows;
                         }
                     } catch (e) {
