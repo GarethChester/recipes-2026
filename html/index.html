@@ -48,6 +48,8 @@
                         sortBy="name"
                         visible-columns="['name']"
                         :filter="searchText"
+                        hide-header
+                        dense
                     >
                         <template v-slot:top-right>
                             <q-input borderless dense debounce="300" v-model="searchText" placeholder="Search">
