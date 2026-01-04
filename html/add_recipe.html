@@ -189,22 +189,13 @@
                                     'Content-Type': 'application/json'
                                 },
                                 body: JSON.stringify({
-                                    prompt: {
-                                        content: [
-                                            {
-                                                type: 'image_input',
-                                                imageInput: {
-                                                    imageBytes: Array.from(bytes),
-                                                },
-                                            },
-                                            {
-                                                type: 'text_input',
-                                                textInput: {
-                                                    text: 'Extract the recipe name, ingredients, and instructions from this image.',
-                                                },
-                                            },
-                                        ],
-                                    },
+                                    contents: [{
+                                        parts: [
+                                            {text: 'Extract the recipe name, ingredients, and instructions from this image.'},
+                                            {image: {imageBytes: Array.from(bytes)}}
+                                        ]
+                                    }]
+
                                 })
                             })
                             console.log('Gemini Response:', response);
