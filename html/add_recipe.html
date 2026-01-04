@@ -70,6 +70,8 @@
                 const schema = ref([]);
                 const selectedSource = ref(null);
                 const sourceOptions = ref([]);
+                const model = ref(null)
+                const options = ref(stringOptions)
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -165,6 +167,8 @@
                 };
 
                 return {
+                    model,
+                    options,
                     isLoggedIn,
                     loading,
                     error,
