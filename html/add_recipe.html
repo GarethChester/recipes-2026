@@ -36,7 +36,7 @@
                 <div class="q-pa-md" v-else>
                     <q-select outlined v-model="selectedSource" label="Cookbook" :options="options"
                         option-label="name" option-value="id" use-input fill-input input-debounce="0" @filter="filterFn"
-                        @input-value="setModel">
+                        @input-value="setModel" hide-selected>
                         <template v-slot:no-option>
                             <q-item>
                                 <q-item-section class="text-grey">
