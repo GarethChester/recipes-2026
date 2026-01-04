@@ -126,7 +126,7 @@
                         } else {
                             // Token is missing or expired. 
                             // We MUST ask the user to click the button or try one silent check.
-                            tokenClient.requestAccessToken({ prompt: 'none' });
+                            tokenClient.requestAccessToken();
                         }
                     };
 
@@ -134,7 +134,7 @@
                     else window.onload = initGis;
                 });
 
-                const handleAuthClick = () => tokenClient.requestAccessToken({ prompt: 'none' });
+                const handleAuthClick = () => tokenClient.requestAccessToken();
 
                 const logout = () => {
                     localStorage.removeItem('bq_token');
