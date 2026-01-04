@@ -92,7 +92,7 @@
                 const error = ref(null);
                 const rows = ref([]);
                 const schema = ref([]);
-                var searchText = ref('');
+                const searchText = ref('');
                 let tokenClient;
                 const params = new Proxy(new URLSearchParams(window.location.search), {
                     get: (searchParams, prop) => searchParams.get(prop),
