@@ -53,6 +53,7 @@
                         append
                         accept=".jpg, image/*"
                     />
+                    <q-btn color = "primary" text-color="white" label="Pull out details" :loading="loadingGemini" @click="sendToGemini"></q-btn>
                 </div>
             </q-page-container>
         </q-layout>
@@ -60,12 +61,12 @@
     <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.umd.prod.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/lang/en-GB.umd.prod.js"></script>
-
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@google/genai@1.34.0/+esm"></script>
 
     <script>
         sourceOptions = []
         const { createApp, ref, onMounted } = Vue;
-
+        
         const app = Vue.createApp({
             setup() {
                 // !!! REPLACE THESE TWO VALUES !!!
@@ -81,6 +82,7 @@
                 const model = ref(null)
                 const options = ref(sourceOptions)
                 const recipePicture = ref(null)
+                const loadingGemini = ref(false)
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -171,6 +173,45 @@
                         loading.value = false;
                     }
                 };
+
+                function sendToGemini() {
+                    loadingGemini.value = true
+                    const genai = new GenAI.GenerativeLanguageClient({ accessToken: localStorage.getItem('bq_token') });
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const arrayBuffer = e.target.result;
+                        const bytes = new Uint8Array(arrayBuffer);
+                        try {
+                            const response = await genai.models.generateContent({
+                                model: 'gemini-1.5-flash',
+                                prompt: {
+                                    content: [
+                                        {
+                                            type: 'image_input',
+                                            imageInput: {
+                                                imageBytes: bytes,
+                                            },
+                                        },
+                                        {
+                                            type: 'text_input',
+                                            textInput: {
+                                                text: 'Extract the recipe name, ingredients, and instructions from this image.',
+                                            },
+                                        },
+                                    ],
+                                },
+                            });
+                            console.log('Gemini Response:', response);
+                            alert('Response from Gemini received. Check console for details.');
+                        } catch (error) {
+                            console.error('Error calling Gemini API:', error);
+                            alert('Error calling Gemini API. Check console for details.');
+                        } finally {
+                            loadingGemini.value = false
+                        }
+                    };
+                    reader.readAsArrayBuffer(recipePicture.value[0]);
+                }
 
                 return {
                     model,
