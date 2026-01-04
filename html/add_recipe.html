@@ -50,6 +50,40 @@
                     </q-file>
                     <q-btn color="primary" text-color="white" label="Pull out details" :loading="loadingGemini"
                         @click="sendToGemini"></q-btn>
+                    <q-input v-model="resultSource.name" label="Recipe Name"></q-input>
+                    <q-input v-model="resultSource.page_number" label="Page Number"></q-input>
+                    <q-table
+                        flat
+                        :rows="resultIngredients"
+                        row-key="ingredient"
+                        :columns="[
+                            { name: 'amount', label: 'Amount', field: 'amount', align: 'left' },
+                            { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
+                            { name: 'ingredient', label: 'Ingredient', field: 'ingredient', align: 'left' },
+                            { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' }
+                        ]"
+                        title="Ingredients"
+                        rowsPerPage ="20"
+                        sortBy="ingredient"
+                        visible-columns="['amount','unit','ingredient','original_text']"
+                        hide-header
+                        dense
+                    />
+                    <q-table
+                        flat
+                        :rows="resultSteps"
+                        row-key="step"
+                        :columns="[
+                            { name: 'step', label: 'Step', field: 'step', align: 'left' },
+                            { name: 'instruction', label: 'Instruction', field: 'instruction', align: 'left' }
+                        ]"
+                        title="Steps"
+                        rowsPerPage ="20"
+                        sortBy="step"
+                        visible-columns="['step','instruction']"
+                        hide-header
+                        dense
+                    />
                 </div>
             </q-page-container>
         </q-layout>
@@ -79,7 +113,9 @@
                 const loadingGemini = ref(false)
                 const recipeDetails = ref(false)
                 const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
-                const result = ref([])
+                const resultSource = ref({})
+                const resultIngredients = ref ([])
+                const resultSteps = ref ([])
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -196,7 +232,7 @@
                     const payload = {
                         contents: [{
                             parts: [
-                                { text: "Please provide 3 JSON objects from these images as follows. 1 - Extract the name of the recipe as 'name' and the page number of the first page if available. 2 - Extract the ingredients  and return them as a JSON with amount, unit, ingredient and original text. Use the text 'item' if no unit specified, and please return ingredients without any preparation (e.g. ground) and as the singular noun (e.g. 'sausage' not 'sausages'). 3 - Extract the steps in order and number them if they are not already" }, // Your prompt
+                                { text: "Please provide 3 JSON objects from these images as follows. 1 - Extract the name of the recipe as 'name' and the page number of the first page as 'page_number' if available. 2 - Extract the ingredients  and return them as a JSON with amount, unit, ingredient and original text. Ensure all numbers are in decimal format.Use the text 'item' if no unit specified, and please return ingredients without any preparation (e.g. ground) and as the singular noun (e.g. 'sausage' not 'sausages'). 3 - Extract the steps in order and number them if they are not already - return these as 'step' and 'instruction'" }, // Your prompt
                                 ...fileParts // This spreads all converted images into the parts array
                             ]
                         }]
@@ -213,8 +249,25 @@
                         body: JSON.stringify(payload)
                     });
 
-                    result.value = await response.json();
-                    console.log(result.value.candidates[0].content.parts[0].text);
+                    const result = await response.json();
+                    const resultString = result.value.candidates[0].content.parts[0].text;
+                    const jsonBlocks = [];
+                    const regex = /```json\s?([\s\S]*?)```/g;
+                    let match
+                    while ((match = regex.exec(resultString)) !== null) {
+                        jsonBlocks.push(match[1].trim());
+                    }
+                    try {
+                        const source = jsonBlocks[0] ? JSON.parse(jsonBlocks[0]) : {};
+                        const ingredients = jsonBlocks[1] ? JSON.parse(jsonBlocks[1]) : [];
+                        const steps = jsonBlocks[2] ? JSON.parse(jsonBlocks[2]) : [];
+                        resultSource.value = source
+                        resultIngredients.value = ingredients
+                        resultSteps.value = steps;      
+                    } catch (e) {
+                        console.error("Failed to parse JSON blocks. Check for trailing commas or markdown errors.", e);
+                        return null;
+                    }
                 };
 
                 return {
@@ -233,7 +286,9 @@
                     recipePicture,
                     loadingGemini,
                     recipeDetails,
-                    result,
+                    resultSource,
+                    resultIngredients,
+                    result
                     filterFn(val, update, abort) {
                         update(() => {
                             const needle = val.toLocaleLowerCase()
