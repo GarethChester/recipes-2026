@@ -338,12 +338,12 @@
                             };
                         })
                     );
-
+                    const text = "Please provide 3 JSON objects from these images as follows. 1 - Extract the name of the recipe as 'name', the number of servings as 'servings' and the page number of the first page as 'page_number' if available. 2 - Extract the ingredients  and return them as a JSON with amount, unit, ingredient and original text. Ensure all numbers are in decimal format.Use the text 'item' if no unit specified, and please return ingredients without any preparation (e.g. ground) and as the singular noun (e.g. 'sausage' not 'sausages') 'Black Pepper' and 'White Pepper' are to be kept with the colour description, and 'Bell Pepper' must also stay the same. Attempt to match units to the json object " + JSON.stringify(unitOptions) + " ingredients to the json object " + JSON.stringify(ingredientOptions) +". If these are matched, replace the unit or ingredient element in the json with the matched key/value pair. Otherwise, add them as {id: -1, name: ingredient}.3 - Extract the steps in order and number them if they are not already - return these as 'step' and 'instruction'";
                     // 2. Combine your text and images into the parts array
                     const payload = {
                         contents: [{
                             parts: [
-                                { text: "Please provide 3 JSON objects from these images as follows. 1 - Extract the name of the recipe as 'name', the number of servings as 'servings' and the page number of the first page as 'page_number' if available. 2 - Extract the ingredients  and return them as a JSON with amount, unit, ingredient and original text. Ensure all numbers are in decimal format.Use the text 'item' if no unit specified, and please return ingredients without any preparation (e.g. ground) and as the singular noun (e.g. 'sausage' not 'sausages') 'Black Pepper' and 'White Pepper' are to be kept with the colour description, and 'Bell Pepper' must also stay the same. Attempt to match units to the json object " + JSON.stringify(unitOptions) + " ingredients to the json object " + JSON.stringify(ingredientOptions) +". If these are matched, replace the unit or ingredient element in the json with the matched key/value pair. Otherwise, add them as {id: -1, name: ingredient}.3 - Extract the steps in order and number them if they are not already - return these as 'step' and 'instruction'" }, // Your prompt
+                                { text: text}, // Your prompt
                                 ...fileParts // This spreads all converted images into the parts array
                             ]
                         }]
