@@ -45,6 +45,7 @@
                             </q-item>
                         </template>
                     </q-select>
+                    <q-input v-model="recipeName" label="Recipe Name" v-if="selectedSource == -1"></q-input>
                     <q-file v-model="recipePicture" label="Drop Image Here" outlined multiple append
                         accept=".jpg, image/*">
                     </q-file>
@@ -160,6 +161,7 @@
                 const resultSource = ref({})
                 const resultIngredients = ref([])
                 const resultSteps = ref([])
+                const sourceName = ref ('');
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -457,6 +459,7 @@ Return these as three distinct markdown code blocks.`;
                     resultSource,
                     resultIngredients,
                     resultSteps,
+                    sourceName,
                     filterFnSource(val, update, abort) {
                         update(() => {
                             const needle = val.toLocaleLowerCase()
