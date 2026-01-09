@@ -228,7 +228,7 @@
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources`",
+                                query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources` order by source_name",
                                 useLegacySql: false
                             })
                         });
@@ -246,7 +246,8 @@
                                 }
                             }) || [];
                             mappedRows.push({ id: -1, name: 'New Cookbook' })
-                            sourceOptions.push(...mappedRows);
+                            sourceOptions.push(...mappedRows)
+                            selectedSource.value = sourceOptions[0];
                         }
                     } catch (e) {
                         errorSource.value = e.message;
