@@ -29,11 +29,11 @@
                     <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
                 </q-tabs>
             </q-header>
-            <q-page-container class="qa-pa-md">
+            <q-page-container class="q-pa-md">
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
-                <div class="q-pa-md" v-else>
+                <div class="q-pa-md column q-gutter-md" v-else>
                     <q-select outlined v-model="selectedSource" label="Cookbook" :options="sOptions" option-label="name"
                         option-value="id" use-input fill-input input-debounce="0" @filter="filterFnSource"
                         @input-value="setModel" hide-selected>
