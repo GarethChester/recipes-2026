@@ -179,9 +179,9 @@
                     const bqHeader = {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'};
                     const bqUrl = `https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`;
                     try {
-                        const responseSource = await fetch(bqUrl, {
+                        const responseSource = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: bqHeader,
+                            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
                             body: JSON.stringify({
                                 query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources`",
                                 useLegacySql: false
@@ -209,29 +209,29 @@
                         loading.value = false;
                     }
                     try {
-                        const responseSource = await fetch(bqUrl, {
+                        const responseUnit = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: bqHeader,
+                            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
                             body: JSON.stringify({
                                 query: "SELECT unit_id, unit_name from `recipes-46d2e.recipes.units`",
                                 useLegacySql: false
                             })
                         });
                         
-                        const data = await responseSource.json();
+                        const unitData = await responseUnit.json();
 
-                        if (data.error) {
-                            if (data.error.code === 401) logout();
-                            else throw new Error(data.error.message);
+                        if (unitData.error) {
+                            if (unitData.error.code === 401) logout();
+                            else throw new Error(unitData.error.message);
                         } else {
-                            schema.value = data.schema.fields;
-                            const mappedRows = data.rows.map(function (row) {
+                            schema.value = unitData.schema.fields;
+                            const unitMappedRows = unitData.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
-                            mappedRows.push({ id: -1, name: 'New New Unit' })
-                            unitOptions = mappedRows;
+                            unitMappedRows.push({ id: -1, name: 'New Unit' })
+                            unitOptions = unitMappedRows;
                         }
                     } catch (e) {
                         error.value = e.message;
@@ -239,29 +239,29 @@
                         loading.value = false;
                     }
                     try {
-                        const responseSource = await fetch(bqUrl, {
+                        const responseIngredients = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: bqHeader,
+                            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
                             body: JSON.stringify({
                                 query: "SELECT ingredient_id, ingredient_name from `recipes-46d2e.recipes.ingredients`",
                                 useLegacySql: false
                             })
                         });
                         
-                        const data = await responseSource.json();
+                        const ingredientData = await responseIngredients.json();
 
-                        if (data.error) {
-                            if (data.error.code === 401) logout();
-                            else throw new Error(data.error.message);
+                        if (ingredientData.error) {
+                            if (ingredientData.error.code === 401) logout();
+                            else throw new Error(ingredientData.error.message);
                         } else {
-                            schema.value = data.schema.fields;
-                            const mappedRows = data.rows.map(function (row) {
+                            schema.value = ingredientData.schema.fields;
+                            const ingredientMappedRows = ingredientData.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
-                            mappedRows.push({ id: -1, name: 'New New Unit' })
-                            ingredientOptions = mappedRows;
+                            ingredientMappedRows.push({ id: -1, name: 'New Ingredient' })
+                            ingredientOptions = ingredientMappedRows;
                         }
                     } catch (e) {
                         error.value = e.message;
