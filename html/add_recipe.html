@@ -265,9 +265,7 @@
                             if (ingredientData.error.code === 401) logout();
                             else throw new Error(ingredientData.error.message);
                         } else {
-                            console.log(ingredientData)
                             iSchema.value = ingredientData.schema.fields;
-                            console.log(iSchema)
                             const ingredientMappedRows = ingredientData.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
@@ -338,6 +336,7 @@
                         const source = jsonBlocks[0] ? JSON.parse(jsonBlocks[0]) : {};
                         const ingredients = jsonBlocks[1] ? JSON.parse(jsonBlocks[1]) : [];
                         const steps = jsonBlocks[2] ? JSON.parse(jsonBlocks[2]) : [];
+                        console.log(ingredients)
                         resultSource.value = source
                         resultIngredients.value = ingredients
                         resultSteps.value = steps;      
