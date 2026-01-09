@@ -105,8 +105,12 @@
                 const PROJECT_ID = 'recipes-46d2e';
                 const searchText = ref('');
                 const isLoggedIn = ref(false);
-                const loading = ref(false);
-                const error = ref(null);
+                const loadingIngredient = ref(false);
+                const loadingSource = ref(false);
+                const loadingUnit = ref(false);
+                const errorIngredient = ref(null);
+                const errorSource = ref(null);
+                const errorUnit = ref(null);
                 const rows = ref([]);
                 const iSchema = ref([]);
                 const uSchema = ref([]);
@@ -178,10 +182,12 @@
                     const token = localStorage.getItem('bq_token');
                     if (!token) return;
 
-                    loading.value = true;
-                    error.value = null;
-                    const bqHeader = {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'};
-                    const bqUrl = `https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`;
+                    loadingSource.value = true;
+                    errorSource.value = null;
+                    loadingUnit.value = true;
+                    errorUnit.value = null;
+                    loadingIngredient.value = true;
+                    errorIngredient.value = null;
                     try {
                         const responseSource = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
@@ -208,9 +214,9 @@
                             sourceOptions = mappedRows;
                         }
                     } catch (e) {
-                        error.value = e.message;
+                        errorSource.value = e.message;
                     } finally {
-                        loading.value = false;
+                        loadingSource.value = false;
                     }
                     try {
                         const responseUnit = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
@@ -238,9 +244,9 @@
                             unitOptions = unitMappedRows;
                         }
                     } catch (e) {
-                        error.value = e.message;
+                        errorUnit.value = e.message;
                     } finally {
-                        loading.value = false;
+                        loadingUnit.value = false;
                     }
                     try {
                         const responseIngredients = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
@@ -271,9 +277,9 @@
                             ingredientOptions = ingredientMappedRows;
                         }
                     } catch (e) {
-                        error.value = e.message;
+                        errorIngredient.value = e.message;
                     } finally {
-                        loading.value = false;
+                        loadingIngredient.value = false;
                     }
 
                 };
@@ -347,8 +353,12 @@
                     uOptions,
                     iOptions,
                     isLoggedIn,
-                    loading,
-                    error,
+                    loadingIngredient,
+                    loadingSource,
+                    loadingUnit,
+                    errorIngredient,
+                    errorSource,
+                    errorUnit,
                     rows,
                     sSchema,
                     iSchema,
