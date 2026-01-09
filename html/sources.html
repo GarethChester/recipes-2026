@@ -54,7 +54,7 @@
                     <button @click="handleAuthClick">Sources</button>
                 </div>                
                 <div class="q-pa-md" v-else>
-                    <div class="row q-col-gutter-md q-row-gutter-md">
+                    <div v-if="!isMobile" class="row q-col-gutter-md q-row-gutter-md">
                         <div class="col-12">
                             <q-table
                                 flat
@@ -89,6 +89,21 @@
                             </q-table>
                         </div>
                     </div>
+
+                    <div v-else class="column q-gutter-md">
+                        <q-input borderless dense debounce="300" v-model="searchText" placeholder="Search">
+                            <template v-slot:append>
+                                <q-icon name="search" />
+                            </template>
+                        </q-input>
+                        <div v-for="(r, idx) in rows.filter(r => (r.name || '').toLowerCase().includes((searchText || '').toLowerCase()))" :key="r.id" class="q-pa-sm bg-grey-1 q-rounded">
+                            <div class="row items-center">
+                                <div class="col">
+                                    <a :href="'index.html?source_id=' + r.id" class="text-primary text-weight-medium">{{ r.name }}</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </q-page-container>
         </q-layout>
@@ -99,7 +114,7 @@
 
 
     <script>
-        const { createApp, ref, onMounted } = Vue;
+        const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
 
         const app = Vue.createApp({
             setup() {
@@ -112,6 +127,12 @@
                 const error = ref(null);
                 const rows = ref([]);
                 const schema = ref([]);
+
+                // mobile watcher
+                const isMobile = ref(false);
+                let mq = null;
+                let mqListener = null;
+
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -151,6 +172,13 @@
 
                     if (window.google) initGis();
                     else window.onload = initGis;
+
+                    // Setup mobile media query listener
+                    mq = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+                    mqListener = mq ? (e => { isMobile.value = e.matches; }) : null;
+                    if (mq && mq.addEventListener) mq.addEventListener('change', mqListener);
+                    else if (mq && mq.addListener) mq.addListener(mqListener);
+                    isMobile.value = mq ? mq.matches : (window.innerWidth <= 768);
                 });
 
                 const handleAuthClick = () => tokenClient.requestAccessToken();
@@ -202,7 +230,14 @@
                     }
                 };
 
-                return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate, searchText };
+                onBeforeUnmount(() => {
+                    if (mq) {
+                        if (mq.removeEventListener) mq.removeEventListener('change', mqListener);
+                        else mq.removeListener(mqListener);
+                    }
+                });
+
+                return { isLoggedIn, loading, error, rows, schema, handleAuthClick, logout, executeTemplate, searchText, isMobile };
             }
         })
         
