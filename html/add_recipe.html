@@ -241,7 +241,7 @@
                                 }
                             }) || [];
                             unitMappedRows.push({ id: -1, name: 'New Unit' })
-                            unitOptions = unitMappedRows;
+                            unitOptions.push(...unitMappedRows);
                         }
                     } catch (e) {
                         errorUnit.value = e.message;
@@ -274,7 +274,7 @@
                                 }
                             }) || [];
                             ingredientMappedRows.push({ id: -1, name: 'New Ingredient' })
-                            ingredientOptions = ingredientMappedRows;
+                            ingredientOptions.push(...ingredientMappedRows);
                         }
                     } catch (e) {
                         errorIngredient.value = e.message;
