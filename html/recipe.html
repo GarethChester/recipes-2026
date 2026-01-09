@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Recipes - All Recipes</title>
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
+        type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/animate.css@^4.0.0/animate.min.css" rel="stylesheet" type="text/css">
+    <link href="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.prod.css" rel="stylesheet" type="text/css">
+</head>
+
+<body>
+    <div id="app">
+        <q-layout view="hHh lpR fFf">
+            <q-header elevated class="bg-primary text-white" height-hint="98">
+                <q-toolbar>
+                    <q-toolbar-title>
+                        <q-avatar>
+                            <img src="https://cdn.quasar.dev/logo-v2/svg/logo-mono-white.svg">
+                        </q-avatar>
+                        Recipes
+                    </q-toolbar-title>
+                </q-toolbar>
+                <q-tabs align="left">
+                    <q-route-tab href="sources.html">Cookbooks</q-route-tab>
+                    <q-route-tab href="index.html">All Recipes</q-route-tab>
+                    <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
+                </q-tabs>
+            </q-header>
+            <q-page-container>                             
+                <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
+                    <button @click="handleAuthClick">Sources</button>
+                </div>                
+                <div class="q-pa-md" v-else>
+                   <h5>{{ recipe.name }}</h5>
+                   <h6>{{recipe.source}}<h6>
+                </div>
+            </q-page-container>
+        </q-layout>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.umd.prod.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/lang/en-GB.umd.prod.js"></script>
+
+    <script>
+        const { createApp, ref, onMounted } = Vue;
+
+        const app = Vue.createApp({
+            setup() {
+                // !!! REPLACE THESE TWO VALUES !!!
+                const CLIENT_ID = '872552222655-gu78ic30706c6164v8st2hu67vj36vhn.apps.googleusercontent.com';
+                const PROJECT_ID = 'recipes-46d2e';
+                const columns = []/*[
+                    {name: 'id', label: '', field: row => row.f[0].v, align: 'left', sortable: true},
+                    {name: 'recipe', label: '', field: row => row.f[1].v, align: 'left', sortable: true}
+                ]|*/
+                const isLoggedIn = ref(false);
+                const loading = ref(false);
+                const error = ref(null);
+                const rows = ref([]);
+                const schema = ref([]);
+                const searchText = ref('');
+                let tokenClient;
+                const params = new Proxy(new URLSearchParams(window.location.search), {
+                    get: (searchParams, prop) => searchParams.get(prop),
+                });
+                // Initialize Google Identity Services
+
+                onMounted(() => {
+                    const initGis = () => {
+                        const cachedToken = localStorage.getItem('bq_token');
+                        const tokenTime = localStorage.getItem('bq_token_time');
+                        const oneHour = 3600 * 1000;
+                        tokenClient = google.accounts.oauth2.initTokenClient({
+                            client_id: CLIENT_ID,
+                            scope: 'https://www.googleapis.com/auth/bigquery https://www.googleapis.com/auth/generative-language.retriever',
+                            callback: (resp) => {
+                                if (resp.access_token) {
+                                    localStorage.setItem('bq_token', resp.access_token);
+                                    localStorage.setItem('bq_token_time', Date.now())
+                                    isLoggedIn.value = true;
+                                    executeTemplate();
+                                } else if (resp.error === 'interaction_required') {
+                                    // This is expected if the user needs to click a button
+                                    console.log("Silent auth failed: User interaction required.");
+                                    isLoggedIn.value = false;
+                                }
+                            },
+                        });
+                        if (cachedToken && (Date.now() - tokenTime < oneHour)) {
+                            // Token is still fresh! No popup needed.
+                            isLoggedIn.value = true;
+                            executeTemplate();
+                        } else {
+                            // Token is missing or expired. 
+                            // We MUST ask the user to click the button or try one silent check.
+                            tokenClient.requestAccessToken();
+                        }
+                    };
+
+                    if (window.google) initGis();
+                    else window.onload = initGis;
+                });
+
+                const handleAuthClick = () => tokenClient.requestAccessToken();
+
+                const logout = () => {
+                    localStorage.removeItem('bq_token');
+                    isLoggedIn.value = false;
+                    rows.value = [];
+                };
+
+                const executeTemplate = async () => {
+                    const token = localStorage.getItem('bq_token');
+                    if (!token) return;
+
+                    loading.value = true;
+                    error.value = null;
+                    source_id = params.id ? params.id : 0
+                    try {
+                        const response = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.url, recipes.serves from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id where recipes.recipe_id = " + id,
+                                useLegacySql: false
+                            })
+                        });
+
+                        const data = await response.json();
+
+                        if (data.error) {
+                            if (data.error.code === 401) logout();
+                            else throw new Error(data.error.message);
+                        } else {
+                            schema.value = data.schema.fields;
+                            const mappedRows = data.rows.map(function(row) {
+                                return {
+                                    source:row.f[0].v,
+                                    name:row.f[1].v,
+                                    page:row.f[2].v,
+                                    url:row.f[3].v,
+                                    serves:row.f[4].v
+                                }
+                            }) || [];
+                            rows.value = mappedRows;
+                        }
+                    } catch (e) {
+                        error.value = e.message;
+                    } finally {
+                        loading.value = false;
+                    }
+                };
+
+                return { isLoggedIn, loading, error, rows, schema, searchText, handleAuthClick, logout, executeTemplate };
+            }
+        })
+
+        app.use(Quasar)
+        Quasar.Lang.set(Quasar.Lang.enGB)
+        app.mount('#app')
+
+    </script>
+
+</body>
+
+</html>
