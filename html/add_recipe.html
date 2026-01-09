@@ -369,6 +369,9 @@
                         jsonBlocks.push(match[1].trim());
                     }
                     try {
+                        console.log(jsonBlocks[0]);
+                        console.log(jsonBlocks[1]);
+                        console.log(jsonBlocks[2]);
                         const source = jsonBlocks[0] ? JSON.parse(jsonBlocks[0]) : {};
                         const ingredients = jsonBlocks[1] ? JSON.parse(jsonBlocks[1]) : [];
                         const steps = jsonBlocks[2] ? JSON.parse(jsonBlocks[2]) : [];
