@@ -108,8 +108,12 @@
                 const loading = ref(false);
                 const error = ref(null);
                 const rows = ref([]);
-                const schema = ref([]);
+                const iSchema = ref([]);
+                const uSchema = ref([]);
+                const sSchema = ref([]);
                 const selectedSource = ref(null);
+                const selectedUnit = ref(null);
+                const selectedIngredient = ref(null);
                 const model = ref(null)
                 const sOptions = ref(sourceOptions)
                 const uOptions = ref(unitOptions)
@@ -194,7 +198,7 @@
                             if (data.error.code === 401) logout();
                             else throw new Error(data.error.message);
                         } else {
-                            schema.value = data.schema.fields;
+                            sSchema.value = data.schema.fields;
                             const mappedRows = data.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
@@ -224,7 +228,7 @@
                             if (unitData.error.code === 401) logout();
                             else throw new Error(unitData.error.message);
                         } else {
-                            schema.value = unitData.schema.fields;
+                            uSchema.value = unitData.schema.fields;
                             const unitMappedRows = unitData.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
@@ -256,7 +260,8 @@
                             else throw new Error(ingredientData.error.message);
                         } else {
                             console.log(ingredientData)
-                            schema.value = ingredientData.schema.fields;
+                            iSchema.value = ingredientData.schema.fields;
+                            console.log(iSchema)
                             const ingredientMappedRows = ingredientData.rows.map(function (row) {
                                 return {
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
@@ -351,6 +356,8 @@
                     executeTemplate,
                     searchText,
                     selectedSource,
+                    selectedUnit,
+                    selectedIngredient,
                     recipePicture,
                     loadingGemini,
                     recipeDetails,
