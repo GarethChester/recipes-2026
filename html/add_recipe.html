@@ -29,7 +29,7 @@
                     <q-route-tab href="add_recipe.html">Add Recipes</q-route-tab>
                 </q-tabs>
             </q-header>
-            <q-page-container>
+            <q-page-container class="qa-pa-md">
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>
@@ -176,8 +176,8 @@
 
                     loading.value = true;
                     error.value = null;
-                    bqHeader = {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'};
-                    bqUrl = `https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`;
+                    const bqHeader = {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'};
+                    const bqUrl = `https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`;
                     try {
                         const responseSource = await fetch(bqUrl, {
                             method: 'POST',
