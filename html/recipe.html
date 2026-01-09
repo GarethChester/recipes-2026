@@ -34,8 +34,8 @@
                     <button @click="handleAuthClick">Sources</button>
                 </div>                
                 <div class="q-pa-md" v-else>
-                   <h5>{{ recipe.name }}</h5>
-                   <h6>{{recipe.source}}<h6>
+                   <h5>{{ rows[0].name }}</h5>
+                   <h6>{{ rows[0].source }}</h6>
                 </div>
             </q-page-container>
         </q-layout>
