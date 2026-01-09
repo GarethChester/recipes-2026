@@ -34,6 +34,14 @@
     .q-table .q-td, .q-table .q-td a { font-size: 1.25rem; }
     .table-row-title { font-size: 1.25rem; }
 
+    /* On small screens, counter the doubled base font-size so table text visually matches desktop */
+    @media (max-width: 768px) {
+      .q-table__title, .q-table .q-td, .q-table .q-td a, .table-row-title {
+        font-size: 0.625rem !important; /* 1.25rem / 2 to cancel html{font-size:200%} */
+        font-weight: 500 !important;
+      }
+    }
+
     </style>
 </head>
 
