@@ -211,7 +211,7 @@
                                 }
                             }) || [];
                             mappedRows.push({ id: -1, name: 'New Cookbook' })
-                            sourceOptions = mappedRows;
+                            sourceOptions.push(...mappedRows);
                         }
                     } catch (e) {
                         errorSource.value = e.message;
