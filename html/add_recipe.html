@@ -49,7 +49,11 @@
                         accept=".jpg, image/*">
                     </q-file>
                     <q-btn color="primary" text-color="white" label="Pull out details" :loading="loadingGemini"
-                        @click="sendToGemini"></q-btn>
+                        @click="sendToGemini">
+                        <template v-slot:loader>
+                            <q-spinner-dots color="white" size="24px" />
+                        </template>
+                    </q-btn>
                     <q-input v-model="resultSource.name" label="Recipe Name"></q-input>
                     <q-input v-model="resultSource.page_number" label="Page Number"></q-input>
                     <q-input v-model="resultSource.servings" label="Servings"></q-input>
@@ -314,6 +318,7 @@
                 };
 
                 const sendToGemini = async () => {
+                    loadingGemini.value = true;
                     const token = localStorage.getItem('bq_token');
 
                     // 1. Loop through all files and convert to base64
@@ -367,10 +372,10 @@
                         const source = jsonBlocks[0] ? JSON.parse(jsonBlocks[0]) : {};
                         const ingredients = jsonBlocks[1] ? JSON.parse(jsonBlocks[1]) : [];
                         const steps = jsonBlocks[2] ? JSON.parse(jsonBlocks[2]) : [];
-                        console.log(ingredients)
                         resultSource.value = source
                         resultIngredients.value = ingredients
                         resultSteps.value = steps;      
+                        loadingGemini.value = false;
                     } catch (e) {
                         console.error("Failed to parse JSON blocks. Check for trailing commas or markdown errors.", e);
                         return null;
