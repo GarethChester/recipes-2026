@@ -107,68 +107,97 @@
                         </div>
 
                         <div class="col-12">
-                            <q-table flat :rows="resultIngredients" row-key="ingredient" :columns="[
+                            <div v-if="!isMobile">
+                                <q-table flat :rows="resultIngredients" row-key="ingredient" :columns="[
                                     { name: 'amount', label: 'Amount', field: 'amount', align: 'left' },
                                     { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
                                     { name: 'ingredient', label: 'Ingredient', field: 'ingredient', align: 'left' },
                                     { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' }
                                 ]" title="Ingredients" rowsPerPage="20" sortBy="ingredient"
                                 visible-columns="['amount','unit','ingredient','original_text']" hide-header dense>
-                                <template v-slot:body-cell-amount="props">
-                                    <q-td :props="props">
-                                        <q-input outlined v-model="props.row.amount" type="number" step="0.01"></q-input>
-                                    </q-td>
-                                </template>
-                                <template v-slot:body-cell-unit="props">
-                                    <q-td :props="props">
-                                        <q-select outlined v-model="props.row.unit" :options="uOptions" option-label="name"
-                                            option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
-                                            hide-selected>
-                                            <template v-slot:no-option>
-                                                <q-item>
-                                                    <q-item-section class="text-grey">
-                                                        No results
-                                                    </q-item-section>
-                                                </q-item>
-                                            </template>
-                                        </q-select>
-                                    </q-td>
-                                </template>
-                                <template v-slot:body-cell-ingredient="props">
-                                    <q-td :props="props">
-                                        <q-select outlined v-model="props.row.ingredient" :options="iOptions"
-                                            option-label="name" option-value="name" use-input fill-input input-debounce="0"
-                                            @filter="filterFnIngredient" hide-selected>
-                                            <template v-slot:no-option>
-                                                <q-item>
-                                                    <q-item-section class="text-grey">
-                                                        No results
-                                                    </q-item-section>
-                                                </q-item>
-                                            </template>
-                                        </q-select>
-                                    </q-td>
-                                </template>
-                                <template v-slot:body-cell-original_text="props">
-                                    <q-td :props="props">
-                                        <q-input outlined v-model="props.row.original_text"></q-input>
-                                    </q-td>
-                                </template>
-                            </q-table>
+                                    <template v-slot:body-cell-amount="props">
+                                        <q-td :props="props">
+                                            <q-input outlined v-model="props.row.amount" type="number" step="0.01"></q-input>
+                                        </q-td>
+                                    </template>
+                                    <template v-slot:body-cell-unit="props">
+                                        <q-td :props="props">
+                                            <q-select outlined v-model="props.row.unit" :options="uOptions" option-label="name"
+                                                option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
+                                                hide-selected>
+                                                <template v-slot:no-option>
+                                                    <q-item>
+                                                        <q-item-section class="text-grey">
+                                                            No results
+                                                        </q-item-section>
+                                                    </q-item>
+                                                </template>
+                                            </q-select>
+                                        </q-td>
+                                    </template>
+                                    <template v-slot:body-cell-ingredient="props">
+                                        <q-td :props="props">
+                                            <q-select outlined v-model="props.row.ingredient" :options="iOptions"
+                                                option-label="name" option-value="name" use-input fill-input input-debounce="0"
+                                                @filter="filterFnIngredient" hide-selected>
+                                                <template v-slot:no-option>
+                                                    <q-item>
+                                                        <q-item-section class="text-grey">
+                                                            No results
+                                                        </q-item-section>
+                                                    </q-item>
+                                                </template>
+                                            </q-select>
+                                        </q-td>
+                                    </template>
+                                    <template v-slot:body-cell-original_text="props">
+                                        <q-td :props="props">
+                                            <q-input outlined v-model="props.row.original_text"></q-input>
+                                        </q-td>
+                                    </template>
+                                </q-table>
+                            </div>
+
+                            <div v-else class="column q-gutter-md">
+                                <div v-for="(ing, idx) in resultIngredients" :key="idx" class="q-pa-sm bg-grey-1 q-rounded">
+                                    <div class="row q-col-gutter-sm q-row-gutter-xs">
+                                        <div class="col-5">
+                                            <q-input outlined dense v-model="ing.amount" type="number" step="0.01" label="Amount"></q-input>
+                                        </div>
+                                        <div class="col-7">
+                                            <q-select outlined dense v-model="ing.unit" :options="uOptions" option-label="name" option-value="name" label="Unit" use-input hide-selected></q-select>
+                                        </div>
+                                        <div class="col-12">
+                                            <q-select outlined dense v-model="ing.ingredient" :options="iOptions" option-label="name" option-value="name" label="Ingredient" use-input hide-selected></q-select>
+                                        </div>
+                                        <div class="col-12">
+                                            <q-input outlined dense v-model="ing.original_text" label="Original Text"></q-input>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="col-12">
-                            <q-table flat :rows="resultSteps" row-key="step" :columns="[
-                                    { name: 'step', label: 'Step', field: 'step', align: 'left' },
-                                    { name: 'instruction', label: 'Instruction', field: 'instruction', align: 'left' }
-                                ]" title="Steps" rowsPerPage="20" sortBy="step" visible-columns="['step','instruction']"
-                                hide-header dense>
-                                <template v-slot:body-cell-instruction="props">
-                                    <q-td :props="props">
-                                        <q-input outlined v-model="props.row.instruction"></q-input>
-                                    </q-td>
-                                </template>
-                            </q-table>
+                            <div v-if="!isMobile">
+                                <q-table flat :rows="resultSteps" row-key="step" :columns="[
+                                        { name: 'step', label: 'Step', field: 'step', align: 'left' },
+                                        { name: 'instruction', label: 'Instruction', field: 'instruction', align: 'left' }
+                                    ]" title="Steps" rowsPerPage="20" sortBy="step" visible-columns="['step','instruction']"
+                                    hide-header dense>
+                                    <template v-slot:body-cell-instruction="props">
+                                        <q-td :props="props">
+                                            <q-input outlined v-model="props.row.instruction"></q-input>
+                                        </q-td>
+                                    </template>
+                                </q-table>
+                            </div>
+
+                            <div v-else class="column q-gutter-md">
+                                <div v-for="(st, idx) in resultSteps" :key="idx" class="q-pa-sm bg-grey-1 q-rounded">
+                                    <q-input outlined dense v-model="st.instruction" :label="'Step ' + (st.step || (idx+1))"></q-input>
+                                </div>
+                            </div>
                         </div>
                     </div>
             </q-page-container>
@@ -182,7 +211,7 @@
         const sourceOptions = []
         const unitOptions = []
         const ingredientOptions = []
-        const { createApp, ref, onMounted } = Vue;
+        const { createApp, ref, onMounted, onBeforeUnmount } = Vue;
         const app = Vue.createApp({
             setup() {
                 // !!! REPLACE THESE TWO VALUES !!!
@@ -216,6 +245,9 @@
                 const resultSteps = ref([])
                 const sourceName = ref ('');
                 let tokenClient;
+                let mq = null;
+                let mqListener = null;
+                const isMobile = ref(window.matchMedia ? window.matchMedia('(max-width: 768px)').matches : false);
 
                 // Initialize Google Identity Services
 
@@ -254,6 +286,20 @@
 
                     if (window.google) initGis();
                     else window.onload = initGis;
+
+                    // Setup mobile media query listener
+                    mq = window.matchMedia('(max-width: 768px)');
+                    mqListener = (e) => { isMobile.value = e.matches; };
+                    if (mq.addEventListener) mq.addEventListener('change', mqListener);
+                    else mq.addListener(mqListener);
+                    isMobile.value = mq.matches;
+                });
+
+                onBeforeUnmount(() => {
+                    if (mq) {
+                        if (mq.removeEventListener) mq.removeEventListener('change', mqListener);
+                        else mq.removeListener(mqListener);
+                    }
                 });
 
                 const handleAuthClick = () => tokenClient.requestAccessToken();
@@ -486,6 +532,7 @@ Return these as three distinct markdown code blocks.`;
 
                 return {
                     model,
+                    isMobile,
                     sOptions,
                     uOptions,
                     iOptions,
