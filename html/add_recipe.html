@@ -57,23 +57,13 @@
                     <q-input v-model="resultSource.name" label="Recipe Name"></q-input>
                     <q-input v-model="resultSource.page_number" label="Page Number"></q-input>
                     <q-input v-model="resultSource.servings" label="Servings"></q-input>
-                    <q-table
-                        flat
-                        :rows="resultIngredients"
-                        row-key="ingredient"
-                        :columns="[
+                    <q-table flat :rows="resultIngredients" row-key="ingredient" :columns="[
                             { name: 'amount', label: 'Amount', field: 'amount', align: 'left' },
                             { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
                             { name: 'ingredient', label: 'Ingredient', field: 'ingredient', align: 'left' },
                             { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' }
-                        ]"
-                        title="Ingredients"
-                        rowsPerPage ="20"
-                        sortBy="ingredient"
-                        visible-columns="['amount','unit','ingredient','original_text']"
-                        hide-header
-                        dense
-                    >
+                        ]" title="Ingredients" rowsPerPage="20" sortBy="ingredient"
+                        visible-columns="['amount','unit','ingredient','original_text']" hide-header dense>
                         <template v-slot:body-cell-unit="props">
                             <q-td :props="props">
                                 <q-select outlined v-model="props.row.unit" :options="uOptions" option-label="name"
@@ -91,35 +81,25 @@
                         </template>
                         <template v-slot:body-cell-ingredient="props">
                             <q-td :props="props">
-                                <q-select outlined v-model="props.row.ingredient" :options="iOptions" option-label="name"
-                                    option-value="name" use-input fill-input input-debounce="0" @filter="filterFnIngredient"
-                                    hide-selected>
+                                <q-select outlined v-model="props.row.ingredient" :options="iOptions"
+                                    option-label="name" option-value="name" use-input fill-input input-debounce="0"
+                                    @filter="filterFnIngredient" hide-selected>
                                     <template v-slot:no-option>
                                         <q-item>
                                             <q-item-section class="text-grey">
                                                 No results
                                             </q-item-section>
-                                        </q-item>       
+                                        </q-item>
                                     </template>
                                 </q-select>
                             </q-td>
                         </template>
-                    </q-table>  
-                    <q-table
-                        flat
-                        :rows="resultSteps"
-                        row-key="step"
-                        :columns="[
+                    </q-table>
+                    <q-table flat :rows="resultSteps" row-key="step" :columns="[
                             { name: 'step', label: 'Step', field: 'step', align: 'left' },
                             { name: 'instruction', label: 'Instruction', field: 'instruction', align: 'left' }
-                        ]"
-                        title="Steps"
-                        rowsPerPage ="20"
-                        sortBy="step"
-                        visible-columns="['step','instruction']"
-                        hide-header
-                        dense
-                    ></q-table>
+                        ]" title="Steps" rowsPerPage="20" sortBy="step" visible-columns="['step','instruction']"
+                        hide-header dense></q-table>
                 </div>
             </q-page-container>
         </q-layout>
@@ -162,8 +142,8 @@
                 const recipeDetails = ref(false)
                 const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
                 const resultSource = ref({})
-                const resultIngredients = ref ([])
-                const resultSteps = ref ([])
+                const resultIngredients = ref([])
+                const resultSteps = ref([])
                 let tokenClient;
 
                 // Initialize Google Identity Services
@@ -226,13 +206,13 @@
                     try {
                         const responseSource = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources`",
                                 useLegacySql: false
                             })
                         });
-                        
+
                         const data = await responseSource.json();
 
                         if (data.error) {
@@ -256,13 +236,13 @@
                     try {
                         const responseUnit = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 query: "SELECT unit_id, unit_name from `recipes-46d2e.recipes.units`",
                                 useLegacySql: false
                             })
                         });
-                        
+
                         const unitData = await responseUnit.json();
 
                         if (unitData.error) {
@@ -275,7 +255,6 @@
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
-                            unitMappedRows.push({ id: -1, name: 'New Unit' })
                             unitOptions.push(...unitMappedRows);
                         }
                     } catch (e) {
@@ -286,13 +265,13 @@
                     try {
                         const responseIngredients = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: {'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json'},
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
                                 query: "SELECT ingredient_id, ingredient_name from `recipes-46d2e.recipes.ingredients`",
                                 useLegacySql: false
                             })
                         });
-                        
+
                         const ingredientData = await responseIngredients.json();
 
                         if (ingredientData.error) {
@@ -306,7 +285,6 @@
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
-                            ingredientMappedRows.push({ id: -1, name: 'New Ingredient' })
                             ingredientOptions.push(...ingredientMappedRows);
                         }
                     } catch (e) {
@@ -338,13 +316,13 @@
                             };
                         })
                     );
-                    const text = "Please provide 3 JSON objects from these images as follows. These MUST be returned as 3 seperate objects. JSON1 - Extract the name of the recipe as 'name', the number of servings as 'servings' and the page number of the first page as 'page_number' if available. JSON2 - Extract the ingredients  and return them as a JSON with amount, unit, ingredient and original text. Ensure all numbers are in decimal format.Use the text 'item' if no unit specified, and please return ingredients without any preparation (e.g. ground) and as the singular noun (e.g. 'sausage' not 'sausages') 'Black Pepper' and 'White Pepper' are to be kept with the colour description, and 'Bell Pepper' must also stay the same. Attempt to match units to the json object " + JSON.stringify(unitOptions) + " ingredients to the json object " + JSON.stringify(ingredientOptions) +". If these are matched, replace the unit or ingredient element in the json with the matched key/value pair. Otherwise, add them as {id: -1, name: ingredient}. JSON3 - Extract the steps in order and number them if they are not already - return these as 'step' and 'instruction'";
+                    const text = "Please provide 3 JSON objects from these images as follows. These MUST be returned as 3 seperate objects. JSON1 - Extract the name of the recipe as 'name', the number of servings as 'servings' and the page number of the first page as 'page_number' if available. JSON2 - Extract the ingredients  and return them as a JSON with amount, unit, ingredient and original text. Ensure all numbers are in decimal format.Use the text 'item' if no unit specified, and please return ingredients without any preparation (e.g. ground) and as the singular noun (e.g. 'sausage' not 'sausages') 'Black Pepper' and 'White Pepper' are to be kept with the colour description, and 'Bell Pepper' must also stay the same. Attempt to match units to the json object " + JSON.stringify(unitOptions) + " ingredients to the json object " + JSON.stringify(ingredientOptions) + ". If these are matched, replace the unit or ingredient element in the json with the matched key/value pair. Otherwise, add them as {id: -1, name: ingredient}. JSON3 - Extract the steps in order and number them if they are not already - return these as 'step' and 'instruction'";
                     console.log(text);
                     // 2. Combine your text and images into the parts array
                     const payload = {
                         contents: [{
                             parts: [
-                                { text: text}, // Your prompt
+                                { text: text }, // Your prompt
                                 ...fileParts // This spreads all converted images into the parts array
                             ]
                         }]
@@ -377,9 +355,16 @@
                         const source = jsonBlocks[0] ? JSON.parse(jsonBlocks[0]) : {};
                         const ingredients = jsonBlocks[1] ? JSON.parse(jsonBlocks[1]) : [];
                         const steps = jsonBlocks[2] ? JSON.parse(jsonBlocks[2]) : [];
+                        const newIngredients = ingredients.filter((row) => row.ingredient.id == -1).map(row => row.ingredient);
+                        const newIngredientsToAdd = newIngredients.filter((item, index, self) =>
+                            index === self.findIndex((t) => (
+                                t.id === item.id && t.area === item.area
+                            ))
+                        );
+                        ingredientOptions.push(...newIngredientsToAdd);
                         resultSource.value = source
                         resultIngredients.value = ingredients
-                        resultSteps.value = steps;      
+                        resultSteps.value = steps;
                         loadingGemini.value = false;
                     } catch (e) {
                         console.error("Failed to parse JSON blocks. Check for trailing commas or markdown errors.", e);
