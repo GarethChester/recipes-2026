@@ -251,9 +251,11 @@
                         const ingredientData = await responseIngredients.json();
 
                         if (ingredientData.error) {
+                            console.log('fail')
                             if (ingredientData.error.code === 401) logout();
                             else throw new Error(ingredientData.error.message);
                         } else {
+                            console.log(ingredientData)
                             schema.value = ingredientData.schema.fields;
                             const ingredientMappedRows = ingredientData.rows.map(function (row) {
                                 return {
