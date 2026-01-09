@@ -69,7 +69,38 @@
                         visible-columns="['amount','unit','ingredient','original_text']"
                         hide-header
                         dense
-                    ></q-table>
+                    >
+                        <template v-slot:body-cell-unit="props">
+                            <q-td :props="props">
+                                <q-select outlined v-model="props.row.unit" :options="uOptions" option-label="name"
+                                    option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
+                                    hide-selected>
+                                    <template v-slot:no-option>
+                                        <q-item>
+                                            <q-item-section class="text-grey">
+                                                No results
+                                            </q-item-section>
+                                        </q-item>
+                                    </template>
+                                </q-select>
+                            </q-td>
+                        </template>
+                        <template v-slot:body-cell-ingredient="props">
+                            <q-td :props="props">
+                                <q-select outlined v-model="props.row.ingredient" :options="iOptions" option-label="name"
+                                    option-value="name" use-input fill-input input-debounce="0" @filter="filterFnIngredient"
+                                    hide-selected>
+                                    <template v-slot:no-option>
+                                        <q-item>
+                                            <q-item-section class="text-grey">
+                                                No results
+                                            </q-item-section>
+                                        </q-item>       
+                                    </template>
+                                </q-select>
+                            </q-td>
+                        </template>
+                    </q-table>  
                     <q-table
                         flat
                         :rows="resultSteps"
