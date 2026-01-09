@@ -28,6 +28,12 @@
       .q-field__native { min-height: 44px !important; }
       .q-page-container { padding-left: 12px !important; padding-right: 12px !important; }
     }
+
+    /* Match table row text to the table title (uses rems so it scales with mobile font-size) */
+    .q-table__title { font-size: 1.25rem; font-weight: 500; }
+    .q-table .q-td, .q-table .q-td a { font-size: 1.25rem; }
+    .table-row-title { font-size: 1.25rem; }
+
     </style>
 </head>
 
@@ -99,7 +105,7 @@
                         <div v-for="(r, idx) in rows.filter(r => (r.name || '').toLowerCase().includes((searchText || '').toLowerCase()))" :key="r.id" class="q-pa-sm bg-grey-1 q-rounded">
                             <div class="row items-center">
                                 <div class="col">
-                                    <a :href="'index.html?source_id=' + r.id" class="text-primary text-weight-medium">{{ r.name }}</a>
+                                    <a :href="'index.html?source_id=' + r.id" class="text-primary text-weight-medium table-row-title">{{ r.name }}</a>
                                 </div>
                             </div>
                         </div>
