@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Recipes - Add Recipe</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
@@ -10,18 +11,21 @@
     <link href="https://cdn.jsdelivr.net/npm/animate.css@^4.0.0/animate.min.css" rel="stylesheet" type="text/css">
     <link href="https://cdn.jsdelivr.net/npm/quasar@2.18.6/dist/quasar.prod.css" rel="stylesheet" type="text/css">
     <style>
-    /* Mobile typography: approx. 2x text size on small screens */
-    @media (max-width: 600px) {
-      /* Scale base font size so most text becomes ~2x larger */
-      html { font-size: 200%; }
+    /* Mobile typography: approximately 2x text size on small screens */
+    @media (max-width: 768px) {
+      /* Scale base font size so most rem-based text becomes larger */
+      html { font-size: 200% !important; }
 
-      /* Improve readability and touch targets for form controls */
-      .q-input__control, .q-select__control, .q-btn, .q-item, .q-td, .q-input__native {
-        font-size: 1.15em !important;
-        line-height: 1.3 !important;
+      /* Ensure Quasar components inherit the larger base size */
+      .q-field, .q-field__control, .q-field__native, .q-input__control, .q-input__native,
+      .q-select__control, .q-select, .q-btn, .q-item, .q-td, .q-page-container {
+        font-size: inherit !important;
+        line-height: 1.35 !important;
       }
 
+      /* Make buttons and controls more touch-friendly */
       .q-btn { padding: 12px 18px !important; }
+      .q-field__native { min-height: 44px !important; }
       .q-page-container { padding-left: 12px !important; padding-right: 12px !important; }
     }
     </style>
