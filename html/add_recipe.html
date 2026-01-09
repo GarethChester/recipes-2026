@@ -57,6 +57,8 @@
                     <q-input v-model="resultSource.name" label="Recipe Name"></q-input>
                     <q-input v-model="resultSource.page_number" label="Page Number"></q-input>
                     <q-input v-model="resultSource.servings" label="Servings"></q-input>
+                    <q-input v-model="resultSource.cooking_time_minutes" label="Cooking Time (minutes)"></q-input>
+                    <q-input v-model="resultSource.effort_rating" label="Effort Rating (out of 5)"></q-input>
                     <q-table flat :rows="resultIngredients" row-key="ingredient" :columns="[
                             { name: 'amount', label: 'Amount', field: 'amount', align: 'left' },
                             { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
