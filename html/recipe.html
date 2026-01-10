@@ -184,6 +184,7 @@
                             console.log(mappedRows);
                             rows.value = mappedRows;
                             console.log(rows.value)
+                            document.title = "Recipe - " + rows.value[0].name;
                         }
                     } catch (e) {
                         error.value = e.message;
