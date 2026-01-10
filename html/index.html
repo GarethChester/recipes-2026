@@ -77,7 +77,10 @@
                                 :columns="[
                                     { name: 'id', label: 'ID', field: 'id', align: 'left' },
                                     { name: 'name', label: 'Recipe Name', field: 'name', align: 'left' },
-                                    { name: 'source', label: 'Source ID', field: 'source', align: 'left' }
+                                    { name: 'source', label: 'Source Name', field: 'source_name', align: 'left' },
+                                    { name: 'page', label: 'Pages', field: 'page', align: 'left' },
+                                    { name: 'cooking_time_minutes', label: 'Cooking Time (mins)', field: 'cooking_time_minutes', align: 'left' },
+                                    { name: 'effort_rating', label: 'Effort Rating', field: 'effort_rating', align: 'left' }
                                 ]"
                                 title="Recipes"
                                 rowsPerPage ="20"
@@ -96,8 +99,16 @@
                         </template>
                         <template v-slot:body="props">
                             <q-tr :props="props">
-                                <q-td key="name" :props="props">
-                                    <a :href="'recipe.html?id' + props.row.id">{{props.row.name}}</a>
+                                <q-td key="name" :props="props"></q-td>
+                                    <div class="col">
+                                        <a :href="'recipe.html?id=' + props.row.id">{{props.row.name}}</a>
+                                        <div class="row italic text-grey">
+                                            <q-chip v-if="props.row.page">{{ props.row.source }} p.{{ props.row.page}}</q-chip>
+                                            <q-chip v-else>{{ props.row.source }}</q-chip>
+                                            <q-chip icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
+                                            <q-rating v-model="props.row.effort_rating" size="2em" color="purple" readonly></q-rating>
+                                        </div>
+                                    </div>
                                 </q-td>
                             </q-tr>
                         </template>
@@ -224,7 +235,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "SELECT recipe_id, recipe_name, source_id from `recipes-46d2e.recipes.recipes`" + (source_id == 0 ? '' : " where source_id = " + source_id),
+                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.cooking_time_minutes, recipes.effort_rating from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id" + (source_id == 0 ? '' : " where recipes.source_id = " + source_id),
                                 useLegacySql: false
                             })
                         });
