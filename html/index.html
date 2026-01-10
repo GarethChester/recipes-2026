@@ -100,16 +100,18 @@
                         <template v-slot:body="props">
                             <q-tr :props="props">
                                 <q-td key="name" :props="props"></q-td>
-                                    <div class="col">
+                                    <div>
                                         <a :href="'recipe.html?id=' + props.row.id">{{props.row.name}}</a>
-                                        <div class="row">
-                                            <q-badge color="purple" v-if="props.row.page"><q-icon name="menu_book" color="text-white"/>{{ props.row.source_name }} p.{{ props.row.page}}</q-badge>
-                                            <q-badge color="purple" v-else><q-icon name="globe" color="text-white"/>{{ props.row.source_name }}</q-badge>
-                                            <q-chip v-if="1==2" icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
-                                            <q-chip v-if="1==2">
-                                                Difficulty: <q-rating v-model="props.row.effort_rating" size="1.5em" color="purple" readonly></q-rating>                                            
-                                            </q-chip>
-                                        </div>
+                                        <q-badge color="purple" v-if="props.row.page">
+                                            <q-icon name="menu_book" color="text-white"/>{{ props.row.source_name }} p.{{ props.row.page}}
+                                        </q-badge>
+                                        <q-badge color="purple" v-else>
+                                            {{ props.row.source_name }}
+                                        </q-badge>
+                                        <q-chip v-if="1==2" icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
+                                        <q-chip v-if="1==2">
+                                            Difficulty: <q-rating v-model="props.row.effort_rating" size="1.5em" color="purple" readonly></q-rating>                                            
+                                        </q-chip>
                                     </div>
                                 </q-td>
                             </q-tr>
