@@ -30,11 +30,12 @@
     }
 
     /* Title/subtitle alignment helpers */
-    .recipe-subtitle { display:inline-flex; align-items:flex-end; margin-left:16px; }
+    .recipe-subtitle { display:inline-flex; align-items:flex-end; margin-left:16px; line-height: 1; }
 
     @media (max-width: 768px) {
-      .recipe-title { font-size: 1.25rem !important; }
-      .recipe-subtitle { display:block !important; margin-left:0 !important; font-size: 1rem !important; margin-top:0.25rem; }
+      /* Reduce both title and subtitle to ~70% of normal and tighten spacing */
+      .recipe-title, .recipe-subtitle { font-size: 0.7em !important; line-height: 1.05 !important; }
+      .recipe-subtitle { display:block !important; margin-left:0 !important; margin-top:0.08rem !important; }
     }
     </style>
 </head>
