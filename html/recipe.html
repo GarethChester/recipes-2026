@@ -228,7 +228,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "select step_no, step_text from `recipes-46d2e.recipes.steps` where recipe_id = '" + recipe_id + "'",   
+                                query: "select step_no, step_text from `recipes-46d2e.recipes.steps` where recipe_id = '" + recipe_id + "' order by step_no asc",   
                                 useLegacySql: false
                             })
                         });
