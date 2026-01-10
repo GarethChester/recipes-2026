@@ -573,9 +573,10 @@ Return these as three distinct markdown code blocks.`;
                     };
 
                     const runQuery = async (query) => {
+                        console.log(JSON.stringify({ query, useLegacySql: false }));
                         const resp = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
-                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json', 'x-goog-user-project': PROJECT_ID },
                             body: JSON.stringify({ query, useLegacySql: false })
                         });
                         const data = await resp.json();
