@@ -107,7 +107,7 @@
                                             <q-chip icon="clock" v-else>{{ props.row.source_name }}</q-chip>
                                             <q-chip icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
                                             <q-chip>
-                                                Difficulty: <q-rating v-model="props.row.effort_rating" size="2em" color="purple" readonly></q-rating>                                            
+                                                Difficulty: <q-rating v-model="props.row.effort_rating" size="1.5em" color="purple" readonly></q-rating>                                            
                                             </q-chip>
                                         </div>
                                     </div>
@@ -132,7 +132,7 @@
                                         <q-chip icon="clock" v-if="r.page">{{ r.source_name }} p.{{ r.page}}</q-chip>
                                         <q-chip icon="clock" v-else>{{ r.source_name }}</q-chip>
                                         <q-chip icon="clock">{{ r.cooking_time_minutes }} mins</q-chip>                                            
-                                        <q-rating v-model="r.effort_rating" size="1em" color="purple" readonly></q-rating>
+                                        <q-rating v-model="r.effort_rating" size="0.75em" color="purple" readonly></q-rating>
                                     </div>
                                 </div>
                             </div>
