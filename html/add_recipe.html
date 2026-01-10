@@ -575,7 +575,8 @@ Return these as three distinct markdown code blocks.`;
 
                     const sqlString = (val) => {
                         if (val === null || val === undefined) return 'NULL';
-                        return "'" + String(val).replace(/'/g, "\'") + "'";
+                        // Escape single quotes using backslash for BigQuery (e.g., O\'Reilly)
+                        return "'" + String(val).replace(/'/g, "\\'") + "'";
                     };
 
                     const runQuery = async (query) => {
@@ -607,58 +608,64 @@ Return these as three distinct markdown code blocks.`;
                             sOptions.value = sourceOptions.slice();
                         }
 
+                        // Per-save caches to avoid creating duplicate UUIDs for the same new name
+                        const createdUnits = {};
+                        const createdIngredients = {};
+
                         // Helper to normalize/select or create a Unit by name or object
                         const ensureUnit = async (unitInput) => {
                             if (!unitInput) return null;
-                            // If it's an object with an id
-                            if (typeof unitInput === 'object') {
-                                if (Number(unitInput.id) === -1) {
-                                    const newUnitId = crypto.randomUUID();
-                                    const q = `INSERT INTO \`recipes-46d2e.recipes.units\` (unit_id, unit_name) VALUES (${sqlString(newUnitId)}, ${sqlString(unitInput.name)})`;
-                                    await runQuery(q);
-                                    unitOptions.push({ id: newUnitId, name: unitInput.name });
-                                    uOptions.value = unitOptions.slice();
-                                    return { id: newUnitId, name: unitInput.name };
-                                }
+
+                            // Determine the name and a normalized key
+                            const name = (typeof unitInput === 'object') ? (unitInput.name || '') : String(unitInput || '');
+                            const key = name.trim().toLowerCase();
+                            if (!key) return null;
+
+                            // If we've already created this unit during this save, reuse it
+                            if (createdUnits[key]) return { id: createdUnits[key], name };
+
+                            // If it's an object with an existing id (not -1), return it
+                            if (typeof unitInput === 'object' && Number(unitInput.id) !== -1) {
                                 return { id: unitInput.id, name: unitInput.name };
                             }
 
-                            // If it's a string name, try to find existing
-                            const match = unitOptions.find(u => u.name.toLowerCase() === String(unitInput).toLowerCase());
+                            // Check existing options
+                            const match = unitOptions.find(u => u.name.toLowerCase() === key);
                             if (match) return { id: match.id, name: match.name };
 
-                            // Not found: insert new
+                            // Not found: insert new and cache the generated id
                             const newUnitId = crypto.randomUUID();
-                            const q = `INSERT INTO \`recipes-46d2e.recipes.units\` (unit_id, unit_name) VALUES (${sqlString(newUnitId)}, ${sqlString(unitInput)})`;
+                            const q = `INSERT INTO \`recipes-46d2e.recipes.units\` (unit_id, unit_name) VALUES (${sqlString(newUnitId)}, ${sqlString(name)})`;
                             await runQuery(q);
-                            unitOptions.push({ id: newUnitId, name: unitInput });
+                            unitOptions.push({ id: newUnitId, name });
                             uOptions.value = unitOptions.slice();
-                            return { id: newUnitId, name: unitInput };
+                            createdUnits[key] = newUnitId;
+                            return { id: newUnitId, name };
                         };
 
                         const ensureIngredient = async (ingInput) => {
                             if (!ingInput) return null;
-                            if (typeof ingInput === 'object') {
-                                if (Number(ingInput.id) === -1) {
-                                    const newIngredientId = crypto.randomUUID();
-                                    const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(ingInput.name)})`;
-                                    await runQuery(q);
-                                    ingredientOptions.push({ id: newIngredientId, name: ingInput.name });
-                                    iOptions.value = ingredientOptions.slice();
-                                    return { id: newIngredientId, name: ingInput.name };
-                                }
+
+                            const name = (typeof ingInput === 'object') ? (ingInput.name || '') : String(ingInput || '');
+                            const key = name.trim().toLowerCase();
+                            if (!key) return null;
+
+                            if (createdIngredients[key]) return { id: createdIngredients[key], name };
+
+                            if (typeof ingInput === 'object' && Number(ingInput.id) !== -1) {
                                 return { id: ingInput.id, name: ingInput.name };
                             }
 
-                            const match = ingredientOptions.find(i => i.name.toLowerCase() === String(ingInput).toLowerCase());
+                            const match = ingredientOptions.find(i => i.name.toLowerCase() === key);
                             if (match) return { id: match.id, name: match.name };
 
                             const newIngredientId = crypto.randomUUID();
-                            const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(ingInput)})`;
+                            const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(name)})`;
                             await runQuery(q);
-                            ingredientOptions.push({ id: newIngredientId, name: ingInput });
+                            ingredientOptions.push({ id: newIngredientId, name });
                             iOptions.value = ingredientOptions.slice();
-                            return { id: newIngredientId, name: ingInput };
+                            createdIngredients[key] = newIngredientId;
+                            return { id: newIngredientId, name };
                         };
 
                         // 2) Normalize all ingredient rows: ensure units and ingredients have IDs
