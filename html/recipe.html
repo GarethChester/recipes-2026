@@ -163,6 +163,7 @@
                             else throw new Error(data.error.message);
                         } else {
                             schema.value = data.schema.fields;
+                            console.log(data.rows)
                             const mappedRows = data.rows.map(function(row) {
                                 return {
                                     source:row.f[0].v,
@@ -172,7 +173,9 @@
                                     serves:row.f[4].v
                                 }
                             }) || [];
+                            console.log(mappedRows);
                             rows.value = mappedRows;
+                            console.log(rows.value)
                         }
                     } catch (e) {
                         error.value = e.message;
