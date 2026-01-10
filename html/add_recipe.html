@@ -542,8 +542,11 @@ Return these as three distinct markdown code blocks.`;
                         console.log(jsonBlocks[1]);
                         console.log(jsonBlocks[2]);
                         const source = jsonBlocks[0] ? JSON.parse(jsonBlocks[0]) : {};
+                        console.log(source)
                         const ingredients = jsonBlocks[1] ? JSON.parse(jsonBlocks[1]) : [];
+                        console.log(ingredients)
                         const steps = jsonBlocks[2] ? JSON.parse(jsonBlocks[2]) : [];
+                        console.log(steps)
                         const newIngredients = ingredients.filter((row) => row.ingredient.id == -1).map(row => row.ingredient);
                         const newIngredientsToAdd = newIngredients.filter((item, index, self) =>
                             index === self.findIndex((t) => (
