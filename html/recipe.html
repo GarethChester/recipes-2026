@@ -152,7 +152,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.url, recipes.serves from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id where recipes.recipe_id = " + id,
+                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.url, recipes.serves from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id where recipes.recipe_id = '" + id + "'",   
                                 useLegacySql: false
                             })
                         });
