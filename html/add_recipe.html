@@ -499,16 +499,19 @@
   2. Map the ID based on this first option.
   3. Keep the ENTIRE text (including the "or" and the alternative) in the "original_text" field.
 - **TOTAL TIME ESTIMATION (CRITICAL)**: 
+  1. Identify ALL distinct cooking stages (e.g., Stovetop Simmering, Oven Baking, Resting).
+  2. If these stages happen one after the other (sequential), you MUST SUM them.
   1. If no explicit time is listed, you MUST estimate based on the instructions.
-  2. HEURISTIC RULES: 
+  3. HEURISTIC RULES: 
      - "Until onions brown/soften": +8 minutes.
      - "Until meat is cooked through/browned": +10 minutes.
      - "Simmer to reduce": +15 minutes.
      - "Bring to a boil": +5 minutes.
      - Any other instructions please estimate accordingly
-  3. MANDATORY: Add estimated prep time for ingredient descriptors (e.g., "finely chopped" = 3 mins per item).
-  4. Final "cooking_time_minutes" must be a single integer representing (Prep + Active Cook Time).
-  5. Include any marinating time, but if the marination is "overnight" consider this to be 0 minutes of action time
+  4. MANDATORY: Add estimated prep time for ingredient descriptors (e.g., "finely chopped" = 3 mins per item).
+  5. Final "cooking_time_minutes" must be a single integer representing (Prep + Active Cook Time).
+  6. Include any marinating time, but if the marination is "overnight" consider this to be 0 minutes of action time
+  7. If the recipe has no time estimates at all, you MUST provide a reasonable total time based on the steps.
 - EFFORT RATING: Out of 5 (allow halves). Higher ratings for recipes with many "until [state]" instructions as they require more attention.
 - For ingredients: use singular nouns, remove prep (e.g., 'lamb' not 'ground lamb'), but keep 'black pepper', 'white pepper', and 'bell pepper'.
 - If an ingredient line has 'or' then treat that as one ingredient, using the first option to fill the name, amount and unit.
