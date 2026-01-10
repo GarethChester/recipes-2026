@@ -102,15 +102,17 @@
                                 <q-td key="name" :props="props"></q-td>
                                     <div class="q-pa-md q-gutter-sm">
                                         <a :href="'recipe.html?id=' + props.row.id">{{props.row.name}}</a>
-                                        <q-badge color="purple" v-if="props.row.page">
-                                            <q-icon name="menu_book" color="text-white"/>{{ props.row.source_name }} p.{{ props.row.page}}
-                                        </q-badge>
-                                        <q-chip size="md" icon="language" text-color="white" color="purple" v-else>
+                                        <q-chip size="sm" icon="menu_book" text-color="white" color="purple" v-if="!props.row.page">
+                                            {{ props.row.source_name }} p.{{ props.row.page}}
+                                        </q-chip>
+                                        <q-chip size="sm" icon="language" text-color="white" color="purple" v-else>
                                             {{ props.row.source_name }}
                                         </q-chip>
-                                        <q-chip v-if="1==2" icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
-                                        <q-chip v-if="1==2">
-                                            Difficulty: <q-rating v-model="props.row.effort_rating" size="1.5em" color="purple" readonly></q-rating>                                            
+                                        <q-chip size="sm" icon="schedule" text-color="white" color="purple">
+                                            {{ props.row.cooking_time_minutes }} mins
+                                        </q-chip>
+                                        <q-chip size="sm" text-color="white" color="purple">
+                                            Difficulty: <q-rating v-model="props.row.effort_rating" size="1.5em" color="white" readonly></q-rating>                                            
                                         </q-chip>
                                     </div>
                                 </q-td>
