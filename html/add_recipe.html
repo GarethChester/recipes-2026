@@ -475,7 +475,6 @@
 - If marinating time is "overnight," assume 0 minutes for that portion.
 - EFFORT RATING: Provide an indicative effort rating out of 5 based on complexity (allow halves, e.g., 3.5).
 - For ingredients: use singular nouns, remove prep (e.g., 'lamb' not 'ground lamb'), but keep 'black pepper', 'white pepper', and 'bell pepper'.
-- If a unit or ingredient is not in the provided lists, use {"id": -1, "name": extracted name}.
 
 ### OUTPUT SCHEMA:
 1. METADATA OBJECT:
@@ -497,6 +496,9 @@ An array where each item is:
 }
 - Use these Units: ` + JSON.stringify(unitOptions)  + `
 - Use these Ingredients: ` + JSON.stringify(ingredientOptions) + `
+- MATCHING LOGIC: 
+  - If a unit or ingredient is found in the lists above, use the exact "id" and "name" from the list.
+  - If it is NOT in the list, you MUST use -1 for the "id" and the **actual ingredient name you found in the recipe** for the "name". Do not use the phrase "extracted name".
 
 3. STEPS ARRAY:
 An array where each item is: { "step": number, "instruction": string }
