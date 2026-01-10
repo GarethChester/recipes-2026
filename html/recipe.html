@@ -113,7 +113,7 @@
                                     <q-tab name="ingredients" label="Ingredients"></q-tab>
                                     <q-tab name="steps" label="Steps"></q-tab>
                                 </q-tabs>
-                                <q-tab-panels v-model="mobileTab" animated>
+                                <q-tab-panels v-model="mobileTab" animated swipeable> 
                                     <q-tab-panel name="ingredients">
                                         <q-list dense>
                                             <q-item v-for="ingredient in ingredientRows" :key="ingredient.original_text">
