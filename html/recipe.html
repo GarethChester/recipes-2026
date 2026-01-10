@@ -53,7 +53,7 @@
                 <div v-if="!isLoggedIn" style="text-align: center; padding: 40px 0;">
                     <button @click="handleAuthClick">Sources</button>
                 </div>                
-                <div class="q-pa-md" v-else>
+                <div class="q-pa-md" v-if="rows.length > 0">
                     <div class="row q-col-gutter-md q-row-gutter-md">
                         <div class="col-12">
                            <h5>{{ rows[0].name }}</h5>
