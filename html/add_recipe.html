@@ -151,13 +151,18 @@
                                         </template>
                                         <template v-slot:body-cell-unit="props">
                                             <q-td :props="props">
-                                                <q-select dense outlined v-model="props.row.unit" :options="uOptions" option-label="name"
-                                                    option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
+                                                <q-select dense outlined
+                                                    :model-value="props.row.unit ? props.row.unit.name : null"
+                                                    @update:model-value="val => { const v = String(val || '').trim(); const m = uOptions.find(u => u.name.toLowerCase() === v.toLowerCase()); props.row.unit = m ? { id: m.id, name: m.name } : (v ? { id: -1, name: v } : null); }"
+                                                    :options="uOptions" option-label="name" option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
                                                     hide-selected>
                                                     <template v-slot:no-option>
                                                         <q-item>
                                                             <q-item-section class="text-grey">
-                                                                No results
+                                                                <div v-if="props && props.row && props.row.unit && props.row.unit.name">
+                                                                    No results. <q-btn flat dense color="primary" label="Create" @click.stop.prevent="createUnitFromSelect(props.row, props.row.unit.name)"></q-btn>
+                                                                </div>
+                                                                <div v-else>No results</div>
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>
@@ -166,13 +171,18 @@
                                         </template>
                                         <template v-slot:body-cell-ingredient="props">
                                             <q-td :props="props">
-                                                <q-select dense outlined v-model="props.row.ingredient" :options="iOptions"
-                                                    option-label="name" option-value="name" use-input fill-input input-debounce="0"
+                                                <q-select dense outlined
+                                                    :model-value="props.row.ingredient ? props.row.ingredient.name : null"
+                                                    @update:model-value="val => { const v = String(val || '').trim(); const m = iOptions.find(i => i.name.toLowerCase() === v.toLowerCase()); props.row.ingredient = m ? { id: m.id, name: m.name } : (v ? { id: -1, name: v } : null); }"
+                                                    :options="iOptions" option-label="name" option-value="name" use-input fill-input input-debounce="0"
                                                     @filter="filterFnIngredient" hide-selected>
                                                     <template v-slot:no-option>
                                                         <q-item>
                                                             <q-item-section class="text-grey">
-                                                                No results
+                                                                <div v-if="props && props.row && props.row.ingredient && props.row.ingredient.name">
+                                                                    No results. <q-btn flat dense color="primary" label="Create" @click.stop.prevent="createIngredientFromSelect(props.row, props.row.ingredient.name)"></q-btn>
+                                                                </div>
+                                                                <div v-else>No results</div>
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>
@@ -199,10 +209,34 @@
                                                 <q-input outlined dense v-model="ing.amount" type="number" step="0.01" label="Amount"></q-input>
                                             </div>
                                             <div class="col-7">
-                                                <q-select outlined dense v-model="ing.unit" :options="uOptions" option-label="name" option-value="name" label="Unit" use-input hide-selected></q-select>
+                                                <q-select outlined dense
+                                                    :model-value="ing.unit ? ing.unit.name : null"
+                                                    @update:model-value="val => { const v = String(val || '').trim(); const m = uOptions.find(u => u.name.toLowerCase() === v.toLowerCase()); ing.unit = m ? { id: m.id, name: m.name } : (v ? { id: -1, name: v } : null); }"
+                                                    :options="uOptions" option-label="name" option-value="name" label="Unit" use-input hide-selected>
+                                                    <template v-slot:no-option>
+                                                        <q-item>
+                                                            <q-item-section class="text-grey">
+                                                                <div v-if="ing && ing.unit && ing.unit.name">No results. <q-btn flat dense color="primary" label="Create" @click.stop.prevent="createUnitFromInput(ing, ing.unit.name)"></q-btn></div>
+                                                                <div v-else>No results</div>
+                                                            </q-item-section>
+                                                        </q-item>
+                                                    </template>
+                                                </q-select>
                                             </div>
                                             <div class="col-12">
-                                                <q-select outlined dense v-model="ing.ingredient" :options="iOptions" option-label="name" option-value="name" label="Ingredient" use-input hide-selected></q-select>
+                                                <q-select outlined dense
+                                                    :model-value="ing.ingredient ? ing.ingredient.name : null"
+                                                    @update:model-value="val => { const v = String(val || '').trim(); const m = iOptions.find(i => i.name.toLowerCase() === v.toLowerCase()); ing.ingredient = m ? { id: m.id, name: m.name } : (v ? { id: -1, name: v } : null); }"
+                                                    :options="iOptions" option-label="name" option-value="name" label="Ingredient" use-input hide-selected>
+                                                    <template v-slot:no-option>
+                                                        <q-item>
+                                                            <q-item-section class="text-grey">
+                                                                <div v-if="ing && ing.ingredient && ing.ingredient.name">No results. <q-btn flat dense color="primary" label="Create" @click.stop.prevent="createIngredientFromInput(ing, ing.ingredient.name)"></q-btn></div>
+                                                                <div v-else>No results</div>
+                                                            </q-item-section>
+                                                        </q-item>
+                                                    </template>
+                                                </q-select>
                                             </div>
                                             <div class="col-12">
                                                 <q-input outlined dense v-model="ing.original_text" label="Original Text"></q-input>
@@ -860,6 +894,39 @@ Return these as three distinct markdown code blocks.`;
                     },
                     removeIngredientByIndex(idx) {
                         if (idx >= 0 && idx < resultIngredients.value.length) resultIngredients.value.splice(idx, 1);
+                    },
+                    async createUnitFromSelect(row, name) {
+                        const v = String(name || '').trim();
+                        if (!v) return;
+                        const existing = unitOptions.find(u => u.name.toLowerCase() === v.toLowerCase());
+                        if (existing) { row.unit = { id: existing.id, name: existing.name }; return; }
+                        // Confirm with user
+                        Quasar.Dialog.create({ title: 'Create Unit', message: `Create new unit "${v}"?`, cancel: true })
+                            .onOk(() => {
+                                // add placeholder with id -1
+                                unitOptions.push({ id: -1, name: v });
+                                uOptions.value = unitOptions.slice();
+                                row.unit = { id: -1, name: v };
+                            });
+                    },
+                    async createIngredientFromSelect(row, name) {
+                        const v = String(name || '').trim();
+                        if (!v) return;
+                        const existing = ingredientOptions.find(i => i.name.toLowerCase() === v.toLowerCase());
+                        if (existing) { row.ingredient = { id: existing.id, name: existing.name }; return; }
+                        Quasar.Dialog.create({ title: 'Create Ingredient', message: `Create new ingredient "${v}"?`, cancel: true })
+                            .onOk(() => {
+                                ingredientOptions.push({ id: -1, name: v });
+                                iOptions.value = ingredientOptions.slice();
+                                row.ingredient = { id: -1, name: v };
+                            });
+                    },
+                    // mobile input variants
+                    async createUnitFromInput(ing, name) {
+                        await this.createUnitFromSelect(ing, name);
+                    },
+                    async createIngredientFromInput(ing, name) {
+                        await this.createIngredientFromSelect(ing, name);
                     }
                 }
             }
