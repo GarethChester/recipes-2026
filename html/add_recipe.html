@@ -674,7 +674,7 @@ Return these as three distinct markdown code blocks.`;
                         const effort = sqlNum(rs.effort_rating);
                         const servingsVal = sqlNum(rs.servings);
 
-                        const insertRecipeQ = `INSERT INTO \`recipes-46d2e.recipes.recipes\` (recipe_id, recipe_name, source_id, page, cooking_time_minutes, effort_rating, servings) VALUES (${sqlString(newRecipeId)}, ${sqlString(recipeName)}, ${sqlString(selectedSource.value.id)}, ${page}, ${cooking}, ${effort}, ${servingsVal})`;
+                        const insertRecipeQ = `INSERT INTO \`recipes-46d2e.recipes.recipes\` (recipe_id, recipe_name, source_id, page, cooking_time_minutes, effort_rating, serves) VALUES (${sqlString(newRecipeId)}, ${sqlString(recipeName)}, ${sqlString(selectedSource.value.id)}, ${page}, ${cooking}, ${effort}, ${servingsVal})`;
                         await runQuery(insertRecipeQ);
 
                         // 4) Insert recipe ingredients
@@ -691,7 +691,7 @@ Return these as three distinct markdown code blocks.`;
                             const st = resultSteps.value[i];
                             const stepNum = sqlNum(st.step || (i + 1));
                             const instr = st.instruction || '';
-                            const insertStepQ = `INSERT INTO \`recipes-46d2e.recipes.steps\` (recipe_id, step, instruction) VALUES (${sqlString(newRecipeId)}, ${stepNum}, ${sqlString(instr)})`;
+                            const insertStepQ = `INSERT INTO \`recipes-46d2e.recipes.steps\` (recipe_id, step_no, step_text) VALUES (${sqlString(newRecipeId)}, ${stepNum}, ${sqlString(instr)})`;
                             await runQuery(insertStepQ);
                         }
 
