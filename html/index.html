@@ -75,7 +75,7 @@
                                 :rows="rows"
                                 row-key="id"
                                 :columns="[
-                                    { name: 'id', label: 'ID', field: 'id', align: 'left' },
+                                    { name: 'id', label: 'ID', field: 'recipe_id', align: 'left' },
                                     { name: 'name', label: 'Recipe Name', field: 'name', align: 'left' },
                                     { name: 'source', label: 'Source Name', field: 'source_name', align: 'left' },
                                     { name: 'page', label: 'Pages', field: 'page', align: 'left' },
@@ -130,7 +130,7 @@
                                             <q-chip v-if="r.page">{{ r.source }} p.{{ r.page}}</q-chip>
                                             <q-chip v-else>{{ r.source }}</q-chip>
                                             <q-chip icon="clock">{{ r.cooking_time_minutes }} mins</q-chip>
-                                            <q-rating v-model="r.effort_rating" size="2em" color="purple" readonly></q-rating>
+                                            <q-rating v-model="r.effort_rating" size="1em" color="purple" readonly></q-rating>
                                         </div>
                                 </div>
                             </div>
@@ -240,7 +240,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.cooking_time_minutes, recipes.effort_rating from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id" + (source_id == 0 ? '' : " where recipes.source_id = " + source_id),
+                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.cooking_time_minutes, recipes.effort_rating, recipes.recipe_id from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id" + (source_id == 0 ? '' : " where recipes.source_id = " + source_id),
                                 useLegacySql: false
                             })
                         });
@@ -254,7 +254,7 @@
                             schema.value = data.schema.fields;
                             const mappedRows = data.rows.map(function(row) {
                                 return {
-                                    id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A', source: row.f[2]?.v || -1
+                                    source_name: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A', page: row.f[2]?.v || null, cooking_time_minutes: row.f[3]?.v || -1, effort_rating: row.f[4]?.v || -1, recipe_id: row.f[5]?.v || -1
                                 }
                             }) || [];
                             rows.value = mappedRows;
