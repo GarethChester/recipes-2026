@@ -100,7 +100,7 @@
                         <template v-slot:body="props">
                             <q-tr :props="props">
                                 <q-td key="name" :props="props"></q-td>
-                                    <div class="row q-pa-md q-gutter-md">
+                                    <div class="q-pa-md q-gutter-md">
                                         <a :href="'recipe.html?id=' + props.row.id">{{props.row.name}}</a>
                                         <q-badge color="purple" v-if="props.row.page"><q-icon name="menu_book" color="text-white"/>{{ props.row.source_name }} p.{{ props.row.page}}</q-badge>
                                         <q-badge color="purple" v-else><q-icon name="globe" color="text-white"/>{{ props.row.source_name }}</q-badge>
