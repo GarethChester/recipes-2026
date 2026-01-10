@@ -638,7 +638,21 @@ Return these as three distinct markdown code blocks.`;
 
                             // Check existing options
                             const match = unitOptions.find(u => u.name.toLowerCase() === key);
-                            if (match) return { id: match.id, name: match.name };
+                            if (match) {
+                                // If an existing placeholder (-1) exists, create a real ID and update it
+                                if (Number(match.id) === -1) {
+                                    if (createdUnits[key]) return { id: createdUnits[key], name };
+                                    const newUnitId = crypto.randomUUID();
+                                    const q = `INSERT INTO \`recipes-46d2e.recipes.units\` (unit_id, unit_name) VALUES (${sqlString(newUnitId)}, ${sqlString(name)})`;
+                                    await runQuery(q);
+                                    // update existing option entry
+                                    match.id = newUnitId;
+                                    uOptions.value = unitOptions.slice();
+                                    createdUnits[key] = newUnitId;
+                                    return { id: newUnitId, name };
+                                }
+                                return { id: match.id, name: match.name };
+                            }
 
                             // Not found: insert new and cache the generated id
                             const newUnitId = crypto.randomUUID();
@@ -664,7 +678,20 @@ Return these as three distinct markdown code blocks.`;
                             }
 
                             const match = ingredientOptions.find(i => i.name.toLowerCase() === key);
-                            if (match) return { id: match.id, name: match.name };
+                            if (match) {
+                                // If an existing placeholder (-1) exists, create a real ID and update it
+                                if (Number(match.id) === -1) {
+                                    if (createdIngredients[key]) return { id: createdIngredients[key], name };
+                                    const newIngredientId = crypto.randomUUID();
+                                    const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(name)})`;
+                                    await runQuery(q);
+                                    match.id = newIngredientId;
+                                    iOptions.value = ingredientOptions.slice();
+                                    createdIngredients[key] = newIngredientId;
+                                    return { id: newIngredientId, name };
+                                }
+                                return { id: match.id, name: match.name };
+                            }
 
                             const newIngredientId = crypto.randomUUID();
                             const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(name)})`;
