@@ -88,7 +88,7 @@
                                     <q-spinner-dots color="white" size="24px" />
                                 </template>
                             </q-btn>
-                            <q-btn color="primary" text-color="white" label="Save" :loading="saving" v-if="resultSource.name && selectedSource && (selectedSource.id != -1 || sourceName)"
+                            <q-btn color="primary" text-color="white" label="Save" :loading="saving" v-if="resultSource && selectedSource && (selectedSource.id != -1 || sourceName)"
                                 @click="saveRecipe" class="q-mb-md">
                                 <template v-slot:loader>
                                     <q-spinner-dots color="white" size="24px" />
@@ -633,7 +633,7 @@ Return these as three distinct markdown code blocks.`;
                     resultSteps,
                     sourceName,
                     saveRecipe,
-                    save,
+                    saving,
                     filterFnSource(val, update, abort) {
                         update(() => {
                             const needle = val.toLocaleLowerCase()
