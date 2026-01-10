@@ -151,18 +151,13 @@
                                         </template>
                                         <template v-slot:body-cell-unit="props">
                                             <q-td :props="props">
-                                                <q-select dense outlined
-                                                    :model-value="props.row.unit ? props.row.unit.name : null"
-                                                    @update:model-value="val => { const v = String(val || '').trim(); const m = uOptions.find(u => u.name.toLowerCase() === v.toLowerCase()); props.row.unit = m ? { id: m.id, name: m.name } : (v ? { id: -1, name: v } : null); }"
-                                                    :options="uOptions" option-label="name" option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
+                                                <q-select dense outlined v-model="props.row.unit" :options="uOptions" option-label="name"
+                                                    option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
                                                     hide-selected>
                                                     <template v-slot:no-option>
                                                         <q-item>
                                                             <q-item-section class="text-grey">
-                                                                <div v-if="props && props.row && props.row.unit && props.row.unit.name">
-                                                                    No results. <q-btn flat dense color="primary" label="Create" @click.stop.prevent="createUnitFromSelect(props.row, props.row.unit.name)"></q-btn>
-                                                                </div>
-                                                                <div v-else>No results</div>
+                                                                No results
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>
@@ -171,18 +166,13 @@
                                         </template>
                                         <template v-slot:body-cell-ingredient="props">
                                             <q-td :props="props">
-                                                <q-select dense outlined
-                                                    :model-value="props.row.ingredient ? props.row.ingredient.name : null"
-                                                    @update:model-value="val => { const v = String(val || '').trim(); const m = iOptions.find(i => i.name.toLowerCase() === v.toLowerCase()); props.row.ingredient = m ? { id: m.id, name: m.name } : (v ? { id: -1, name: v } : null); }"
-                                                    :options="iOptions" option-label="name" option-value="name" use-input fill-input input-debounce="0"
+                                                <q-select dense outlined v-model="props.row.ingredient" :options="iOptions"
+                                                    option-label="name" option-value="name" use-input fill-input input-debounce="0"
                                                     @filter="filterFnIngredient" hide-selected>
                                                     <template v-slot:no-option>
                                                         <q-item>
                                                             <q-item-section class="text-grey">
-                                                                <div v-if="props && props.row && props.row.ingredient && props.row.ingredient.name">
-                                                                    No results. <q-btn flat dense color="primary" label="Create" @click.stop.prevent="createIngredientFromSelect(props.row, props.row.ingredient.name)"></q-btn>
-                                                                </div>
-                                                                <div v-else>No results</div>
+                                                                No results
                                                             </q-item-section>
                                                         </q-item>
                                                     </template>
@@ -443,7 +433,7 @@
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                query: "SELECT unit_id, unit_name from `recipes-46d2e.recipes.units`",
+                                query: "SELECT unit_id, unit_name from `recipes-46d2e.recipes.units` order by unit_name asc",
                                 useLegacySql: false
                             })
                         });
@@ -460,6 +450,7 @@
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
+                            unitMappedRows.push({ id: -2, name: 'New Unit' })
                             unitOptions.push(...unitMappedRows);
                         }
                     } catch (e) {
@@ -472,7 +463,7 @@
                             method: 'POST',
                             headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
                             body: JSON.stringify({
-                                query: "SELECT ingredient_id, ingredient_name from `recipes-46d2e.recipes.ingredients`",
+                                query: "SELECT ingredient_id, ingredient_name from `recipes-46d2e.recipes.ingredients` order by ingredient_name asc",
                                 useLegacySql: false
                             })
                         });
@@ -490,6 +481,7 @@
                                     id: row.f[0]?.v || -1, name: row.f[1]?.v || 'N/A'
                                 }
                             }) || [];
+                            ingredientMappedRows.push({ id: -2, name: 'New Ingredient' })
                             ingredientOptions.push(...ingredientMappedRows);
                         }
                     } catch (e) {
