@@ -59,7 +59,9 @@
                             <div class="row">
                                 <span class="text-weight-medium text-h4">{{ rows[0].name }}</span>
                                 <span class="text-weight-light text-grey">
-                                    {{ rows[0].source }}<span v-if="rows[0].page">, p.{{ rows[0].page }}</span><span v-else> {{ rows[0].url }}</span>
+                                    {{ rows[0].source }}
+                                    <span v-if="rows[0].page">, p.{{ rows[0].page }}</span>
+                                    <a v-else :href="rows[0].url"><q-icon name="link"></q-icon></a>
                                 </span>
                             </div>
                         </div>
