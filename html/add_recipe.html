@@ -579,6 +579,13 @@ Return these as three distinct markdown code blocks.`;
                         return "'" + String(val).replace(/'/g, "\\'") + "'";
                     };
 
+                    // Format numeric values for BigQuery literals (no quotes). Returns 'NULL' for missing/invalid numbers.
+                    const sqlNum = (val) => {
+                        if (val === null || val === undefined || val === '') return 'NULL';
+                        const n = Number(val);
+                        return Number.isFinite(n) ? String(n) : 'NULL';
+                    };
+
                     const runQuery = async (query) => {
                         console.log(JSON.stringify({ query, useLegacySql: false }));
                         const resp = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
