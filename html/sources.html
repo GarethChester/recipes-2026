@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Recipes - All Recipes</title>
+    <title>Recipes - All Cookbooks</title>
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900|Material+Icons" rel="stylesheet"
         type="text/css">
@@ -215,7 +215,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources`",
+                                query: "SELECT source_id, source_name from `recipes-46d2e.recipes.sources` order by sources.reecipe_name",
                                 useLegacySql: false
                             })
                         });
