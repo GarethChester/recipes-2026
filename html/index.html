@@ -126,7 +126,12 @@
                             <div class="row items-center">
                                 <div class="col">
                                     <a :href="'recipe.html?id=' + r.id" class="text-primary text-weight-medium table-row-title">{{ r.name }}</a>
-                                    <div class="text-grey text-caption">Source: {{ r.source }}</div>
+                                    <div class="row italic text-grey text-caption">
+                                            <q-chip v-if="r.page">{{ r.source }} p.{{ r.page}}</q-chip>
+                                            <q-chip v-else>{{ r.source }}</q-chip>
+                                            <q-chip icon="clock">{{ r.cooking_time_minutes }} mins</q-chip>
+                                            <q-rating v-model="r.effort_rating" size="2em" color="purple" readonly></q-rating>
+                                        </div>
                                 </div>
                             </div>
                         </div>
