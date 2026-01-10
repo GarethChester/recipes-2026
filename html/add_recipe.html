@@ -143,9 +143,10 @@
                                         { name: 'amount', label: 'Amount', field: 'amount', align: 'left' },
                                         { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
                                         { name: 'ingredient', label: 'Ingredient', field: 'ingredient', align: 'left' },
-                                        { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' }
+                                        { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' },
+                                        { name: 'actions', label: '', field: 'actions', align: 'right' }
                                     ]" title="Ingredients" rowsPerPage="20" sortBy="ingredient"
-                                    visible-columns="['amount','unit','ingredient','original_text']" hide-header dense>
+                                    visible-columns="['amount','unit','ingredient','original_text','actions']" hide-header dense>
                                         <template v-slot:body-cell-amount="props">
                                             <q-td :props="props">
                                                 <q-input outlined v-model="props.row.amount" type="number" step="0.01"></q-input>
@@ -186,6 +187,11 @@
                                                 <q-input outlined v-model="props.row.original_text"></q-input>
                                             </q-td>
                                         </template>
+                                        <template v-slot:body-cell-actions="props">
+                                            <q-td :props="props" align="right">
+                                                <q-btn dense flat round color="negative" icon="delete" @click.prevent.stop="removeIngredient(props.row)"></q-btn>
+                                            </q-td>
+                                        </template>
                                     </q-table>
                                 </div>
 
@@ -203,6 +209,9 @@
                                             </div>
                                             <div class="col-12">
                                                 <q-input outlined dense v-model="ing.original_text" label="Original Text"></q-input>
+                                            </div>
+                                            <div class="col-12 flex justify-end">
+                                                <q-btn dense flat color="negative" icon="delete" @click.prevent.stop="removeIngredientByIndex(idx)"></q-btn>
                                             </div>
                                         </div>
                                     </div>
@@ -829,7 +838,15 @@ Return these as three distinct markdown code blocks.`;
                     setModel(val) {
                         model.value = val
                     },
-                    sendToGemini
+                    sendToGemini,
+                    // Remove ingredient helpers
+                    removeIngredient(row) {
+                        const idx = resultIngredients.value.indexOf(row);
+                        if (idx !== -1) resultIngredients.value.splice(idx, 1);
+                    },
+                    removeIngredientByIndex(idx) {
+                        if (idx >= 0 && idx < resultIngredients.value.length) resultIngredients.value.splice(idx, 1);
+                    }
                 }
             }
         });
