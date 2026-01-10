@@ -146,12 +146,12 @@
                                     visible-columns="['amount','unit','ingredient','original_text','actions']" hide-header dense>
                                         <template v-slot:body-cell-amount="props">
                                             <q-td :props="props">
-                                                <q-input outlined v-model="props.row.amount" type="number" step="0.01"></q-input>
+                                                <q-input dense outlined v-model="props.row.amount" type="number" step="0.01"></q-input>
                                             </q-td>
                                         </template>
                                         <template v-slot:body-cell-unit="props">
                                             <q-td :props="props">
-                                                <q-select outlined v-model="props.row.unit" :options="uOptions" option-label="name"
+                                                <q-select dense outlined v-model="props.row.unit" :options="uOptions" option-label="name"
                                                     option-value="name" use-input fill-input input-debounce="0" @filter="filterFnUnit"
                                                     hide-selected>
                                                     <template v-slot:no-option>
@@ -166,7 +166,7 @@
                                         </template>
                                         <template v-slot:body-cell-ingredient="props">
                                             <q-td :props="props">
-                                                <q-select outlined v-model="props.row.ingredient" :options="iOptions"
+                                                <q-select dense outlined v-model="props.row.ingredient" :options="iOptions"
                                                     option-label="name" option-value="name" use-input fill-input input-debounce="0"
                                                     @filter="filterFnIngredient" hide-selected>
                                                     <template v-slot:no-option>
@@ -181,7 +181,7 @@
                                         </template>
                                         <template v-slot:body-cell-original_text="props">
                                             <q-td :props="props">
-                                                <q-input outlined v-model="props.row.original_text"></q-input>
+                                                <q-input dense outlined v-model="props.row.original_text"></q-input>
                                             </q-td>
                                         </template>
                                         <template v-slot:body-cell-actions="props">
@@ -513,6 +513,7 @@
 - For ingredients: use singular nouns, remove prep (e.g., 'lamb' not 'ground lamb'), but keep 'black pepper', 'white pepper', and 'bell pepper'.
 - If an ingredient line has 'or' then treat that as one ingredient, using the first option to fill the name, amount and unit.
 - **IMPORTANT**: Every ID must be a string enclosed in double quotes (e.g., "550e8400-e29b-41d4-a716-446655440000").
+
 
 ### OUTPUT SCHEMA:
 1. METADATA OBJECT:
