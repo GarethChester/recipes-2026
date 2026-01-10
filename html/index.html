@@ -240,7 +240,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.cooking_time_minutes, recipes.effort_rating, recipes.recipe_id from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id" + (source_id == 0 ? '' : " where recipes.source_id = '" + source_id +" order by recipes.recipe_name'"),
+                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.cooking_time_minutes, recipes.effort_rating, recipes.recipe_id from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id" + (source_id == 0 ? '' : " where recipes.source_id = '" + source_id) +" order by recipes.recipe_name'",
                                 useLegacySql: false
                             })
                         });
