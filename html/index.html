@@ -106,7 +106,7 @@
                                             <q-icon name="menu_book" color="text-white"/>{{ props.row.source_name }} p.{{ props.row.page}}
                                         </q-badge>
                                         <q-badge color="purple" v-else>
-                                            {{ props.row.source_name }}
+                                            <q-icon name="globe" color="text-white"></q-icon>{{ props.row.source_name }}
                                         </q-badge>
                                         <q-chip v-if="1==2" icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
                                         <q-chip v-if="1==2">
