@@ -56,8 +56,12 @@
                 <div class="q-pa-md" v-if="rows.length > 0">
                     <div class="row q-col-gutter-md q-row-gutter-md">
                         <div class="col-12">
-                           <h5>{{ rows[0].name }}</h5>
-                           <h6>{{ rows[0].source }}</h6>
+                            <div class="row">
+                                <span class="text-primary text-weight-medium table-row-title">{{ rows[0].name }}</span>
+                                <span class="text-primary text-weight-light table-row-title text-grey">
+                                    {{ rows[0].source_name }}<span v-if="rows[0].page">, p.{{ rows[0].page }}</span><span v-else> {{ rows[0].url }}</span>
+                                </span>
+                            </div>
                         </div>
                     </div>
                 </div>
