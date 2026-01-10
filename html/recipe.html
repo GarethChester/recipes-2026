@@ -79,6 +79,20 @@
                                 </q-chip>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="q-pa-sm">
+                                <div class="text-h5 text-weight-medium q-mb-md">Ingredients</div>
+                                <q-list dense>
+                                    <q-item v-for="ingredient in ingredientRows" :key="ingredient.original_text">
+                                        <q-item-section>{{ ingredient.original_text }}</q-item-section>
+                                    </q-item>
+                                </q-list>
+                                <ul>
+                                    <li v-for="ingredient in ingredientRows" :key="ingredient.original_text">
+                                        {{ ingredient.original_text }}
+                                    </li>
+                                </ul>
+                            </div>
                     </div>
                 </div>
             </q-page-container>
