@@ -66,6 +66,19 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="col-12">
+                            <div class="q-pa-sm">
+                                <q-chip size="md" text-color="white" color="purple">
+                                    Serves: {{ rows[0].serves }}
+                                </q-chip>
+                                <q-chip size="md" text-color="white" color="purple">
+                                    Time: {{ rows[0].cooking_time_minutes }} mins
+                                </q-chip>
+                                <q-chip size="md" text-color="white" color="purple">
+                                    Effort: <q-rating v-model="rows[0].effort_rating" size="1.5em" color="white" readonly></q-rating>                                            
+                                </q-chip>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </q-page-container>
