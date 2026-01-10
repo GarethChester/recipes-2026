@@ -488,11 +488,12 @@
 - Do not nest these into a single root object.
 - Use decimal format for all numbers.
 - SERVINGS: If a range is provided (e.g., "4-6"), take the LOWEST value.
-- COOKING TIME: Provide the total time in minutes, ensuring it INCLUDES prep work (chopping, marinating, kneading) and active cooking time. 
+- COOKING TIME: Estimate the total time in minutes, ensuring it INCLUDES prep work (chopping, marinating, kneading) and active cooking time. 
 - If a time range is provided (e.g., "20-30 mins"), take the HIGHEST value.
 - If marinating time is "overnight," assume 0 minutes for that portion.
 - EFFORT RATING: Provide an indicative effort rating out of 5 based on complexity (allow halves, e.g., 3.5).
 - For ingredients: use singular nouns, remove prep (e.g., 'lamb' not 'ground lamb'), but keep 'black pepper', 'white pepper', and 'bell pepper'.
+- If an ingredient line has 'or' then treat that as one ingredient, using the first option to fill the name, amount and unit.
 - **IMPORTANT**: Every ID must be a string enclosed in double quotes (e.g., "550e8400-e29b-41d4-a716-446655440000").
 
 ### OUTPUT SCHEMA:
