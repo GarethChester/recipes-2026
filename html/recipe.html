@@ -166,7 +166,7 @@
 
                     loading.value = true;
                     error.value = null;
-                    source_id = params.id ? params.id : 0
+                    recipe_id = params.id ? params.id : 0
                     try {
                         const response = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
@@ -175,7 +175,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.url, recipes.serves, recipes.cooking_time_minutes, recipes.effort_rating from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id where recipes.recipe_id = '" + source_id + "'",   
+                                query: "select sources.source_name, recipes.recipe_name, recipes.page, recipes.url, recipes.serves, recipes.cooking_time_minutes, recipes.effort_rating from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id where recipes.recipe_id = '" + recipe_id + "'",   
                                 useLegacySql: false
                             })
                         });
@@ -193,7 +193,9 @@
                                     name:row.f[1].v,
                                     page:row.f[2].v,
                                     url:row.f[3].v,
-                                    serves:row.f[4].v
+                                    serves:row.f[4].v,
+                                    cooking_time_minutes:row.f[5].v,
+                                    effort_rating:row.f[6].v
                                 }
                             }) || [];
                             rows.value = mappedRows;
@@ -204,9 +206,74 @@
                     } finally {
                         loading.value = false;
                     }
+                    try {
+                        const stepsResponse = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                query: "select step_no, step_text from `recipes-46d2e.recipes.steps` where recipe_id = '" + recipe_id + "'",   
+                                useLegacySql: false
+                            })
+                        });
+
+                        const stepsData = await stepsResponse.json();
+
+                        if (stepsData.error) {
+                            if (stepsData.error.code === 401) logout();
+                            else throw new Error(stepsData.error.message);
+                        } else {
+                            stepsSchema.value = stepsData.schema.fields;
+                            const stepsMappedRows = stepsData.rows.map(function(row) {
+                                return {
+                                    step_no:row.f[0].v,
+                                    step_text:row.f[1].v
+                                }
+                            }) || [];
+                            stepsRows.value = stepsMappedRows;
+                        }
+                    } catch (e) {
+                        error.value = e.message;
+                    } finally {
+                        loading.value = false;
+                    }
+                    try {
+                        const ingredientsResponse = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
+                            method: 'POST',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                query: "select original_text from `recipes-46d2e.recipes.ingredients` where recipe_id = '" + recipe_id + "'",   
+                                useLegacySql: false
+                            })
+                        });
+
+                        const ingredientsData = await ingredientsResponse.json();
+
+                        if (ingredientsData.error) {
+                            if (ingredientsData.error.code === 401) logout();
+                            else throw new Error(ingredientsData.error.message);
+                        } else {
+                            ingredientSchema.value = ingredientsData.schema.fields;
+                            const ingredientMappedRows = ingredientsData.rows.map(function(row) {
+                                return {
+                                    original_text:row.f[0].v,
+                                }
+                            }) || [];
+                            ingredientRows.value = ingredientMappedRows;
+                        }
+                    } catch (e) {
+                        error.value = e.message;
+                    } finally {
+                        loading.value = false;
+                    }
                 };
 
-                return { isLoggedIn, loading, error, rows, schema, searchText, handleAuthClick, logout, executeTemplate };
+                return { isLoggedIn, loading, error, rows, schema, searchText, handleAuthClick, logout, executeTemplate, stepsRows, stepsSchema, ingredientRows, ingredientSchema};
             }
         })
 
