@@ -561,37 +561,144 @@ Return these as three distinct markdown code blocks.`;
                 const saveRecipe = async () => {
                     saving.value = true;
                     const token = localStorage.getItem('bq_token');
+                    if (!token) {
+                        alert('Not authenticated. Please sign in first.');
+                        saving.value = false;
+                        return;
+                    }
+
+                    const sqlString = (val) => {
+                        if (val === null || val === undefined) return 'NULL';
+                        return "'" + String(val).replace(/'/g, "''") + "'";
+                    };
+
+                    const runQuery = async (query) => {
+                        const resp = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
+                            method: 'POST',
+                            headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ query, useLegacySql: false })
+                        });
+                        const data = await resp.json();
+                        if (data.error) {
+                            if (data.error.code === 401) logout();
+                            throw new Error(data.error.message || JSON.stringify(data.error));
+                        }
+                        return data;
+                    };
+
                     try {
-                        const payload = {
-                            source_id: selectedSource.value.id,
-                            source_name: selectedSource.value.id == -1 ? sourceName.value : null,
-                            name: resultSource.value.name,
-                            page_number: resultSource.value.page_number,
-                            servings: resultSource.value.servings,
-                            cooking_time_minutes: resultSource.value.cooking_time_minutes,
-                            effort_rating: resultSource.value.effort_rating,
-                            ingredients: resultIngredients.value,
-                            steps: resultSteps.value
+                        // 1) If selected source is the placeholder (id == -1), insert new source and update it
+                        if (selectedSource.value && Number(selectedSource.value.id) === -1) {
+                            const newSourceId = crypto.randomUUID();
+                            const q = `INSERT INTO \`recipes-46d2e.recipes.sources\` (source_id, source_name) VALUES (${sqlString(newSourceId)}, ${sqlString(sourceName.value)})`;
+                            await runQuery(q);
+
+                            // Update the selectedSource and source options lists so UI reflects the new id
+                            selectedSource.value.id = newSourceId;
+                            const idx = sourceOptions.findIndex(s => s.id === -1);
+                            if (idx !== -1) sourceOptions[idx].id = newSourceId;
+                            sOptions.value = sourceOptions.slice();
+                        }
+
+                        // Helper to normalize/select or create a Unit by name or object
+                        const ensureUnit = async (unitInput) => {
+                            if (!unitInput) return null;
+                            // If it's an object with an id
+                            if (typeof unitInput === 'object') {
+                                if (Number(unitInput.id) === -1) {
+                                    const newUnitId = crypto.randomUUID();
+                                    const q = `INSERT INTO \`recipes-46d2e.recipes.units\` (unit_id, unit_name) VALUES (${sqlString(newUnitId)}, ${sqlString(unitInput.name)})`;
+                                    await runQuery(q);
+                                    unitOptions.push({ id: newUnitId, name: unitInput.name });
+                                    uOptions.value = unitOptions.slice();
+                                    return { id: newUnitId, name: unitInput.name };
+                                }
+                                return { id: unitInput.id, name: unitInput.name };
+                            }
+
+                            // If it's a string name, try to find existing
+                            const match = unitOptions.find(u => u.name.toLowerCase() === String(unitInput).toLowerCase());
+                            if (match) return { id: match.id, name: match.name };
+
+                            // Not found: insert new
+                            const newUnitId = crypto.randomUUID();
+                            const q = `INSERT INTO \`recipes-46d2e.recipes.units\` (unit_id, unit_name) VALUES (${sqlString(newUnitId)}, ${sqlString(unitInput)})`;
+                            await runQuery(q);
+                            unitOptions.push({ id: newUnitId, name: unitInput });
+                            uOptions.value = unitOptions.slice();
+                            return { id: newUnitId, name: unitInput };
                         };
 
-                        const response = await fetch(`https://recipes-46d2e.uc.r.appspot.com/add_recipe`, {
-                            method: 'POST',
-                            headers: {
-                                'Authorization': `Bearer ${token}`,
-                                'Content-Type': 'application/json'
-                            },
-                            body: JSON.stringify(payload)
-                        });
+                        const ensureIngredient = async (ingInput) => {
+                            if (!ingInput) return null;
+                            if (typeof ingInput === 'object') {
+                                if (Number(ingInput.id) === -1) {
+                                    const newIngredientId = crypto.randomUUID();
+                                    const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(ingInput.name)})`;
+                                    await runQuery(q);
+                                    ingredientOptions.push({ id: newIngredientId, name: ingInput.name });
+                                    iOptions.value = ingredientOptions.slice();
+                                    return { id: newIngredientId, name: ingInput.name };
+                                }
+                                return { id: ingInput.id, name: ingInput.name };
+                            }
 
-                        const data = await response.json();
+                            const match = ingredientOptions.find(i => i.name.toLowerCase() === String(ingInput).toLowerCase());
+                            if (match) return { id: match.id, name: match.name };
 
-                        if (data.error) {
-                            throw new Error(data.error);
-                        } else {
-                            // Successfully saved
-                            alert('Recipe saved successfully!');
-                            // Optionally, reset the form here
+                            const newIngredientId = crypto.randomUUID();
+                            const q = `INSERT INTO \`recipes-46d2e.recipes.ingredients\` (ingredient_id, ingredient_name) VALUES (${sqlString(newIngredientId)}, ${sqlString(ingInput)})`;
+                            await runQuery(q);
+                            ingredientOptions.push({ id: newIngredientId, name: ingInput });
+                            iOptions.value = ingredientOptions.slice();
+                            return { id: newIngredientId, name: ingInput };
+                        };
+
+                        // 2) Normalize all ingredient rows: ensure units and ingredients have IDs
+                        for (let i = 0; i < resultIngredients.value.length; i++) {
+                            const row = resultIngredients.value[i];
+
+                            const normalizedUnit = await ensureUnit(row.unit);
+                            if (normalizedUnit) row.unit = normalizedUnit;
+
+                            const normalizedIngredient = await ensureIngredient(row.ingredient);
+                            if (normalizedIngredient) row.ingredient = normalizedIngredient;
                         }
+
+                        // 3) Insert the recipe metadata
+                        const newRecipeId = crypto.randomUUID();
+                        const rs = resultSource.value || {};
+                        const recipeName = rs.name || '';
+                        const page = sqlNum(rs.page_number);
+                        const cooking = sqlNum(rs.cooking_time_minutes);
+                        const effort = sqlNum(rs.effort_rating);
+                        const servingsVal = sqlNum(rs.servings);
+
+                        const insertRecipeQ = `INSERT INTO \`recipes-46d2e.recipes.recipes\` (recipe_id, recipe_name, source_id, page, cooking_time_minutes, effort_rating, servings) VALUES (${sqlString(newRecipeId)}, ${sqlString(recipeName)}, ${sqlString(selectedSource.value.id)}, ${page}, ${cooking}, ${effort}, ${servingsVal})`;
+                        await runQuery(insertRecipeQ);
+
+                        // 4) Insert recipe ingredients
+                        for (let i = 0; i < resultIngredients.value.length; i++) {
+                            const row = resultIngredients.value[i];
+                            const amountVal = sqlNum(row.amount);
+                            const orig = row.original_text || '';
+                            const insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text) VALUES (${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)})`;
+                            await runQuery(insertIngQ);
+                        }
+
+                        // 5) Insert steps
+                        for (let i = 0; i < resultSteps.value.length; i++) {
+                            const st = resultSteps.value[i];
+                            const stepNum = sqlNum(st.step || (i + 1));
+                            const instr = st.instruction || '';
+                            const insertStepQ = `INSERT INTO \`recipes-46d2e.recipes.steps\` (recipe_id, step, instruction) VALUES (${sqlString(newRecipeId)}, ${stepNum}, ${sqlString(instr)})`;
+                            await runQuery(insertStepQ);
+                        }
+
+                        alert('Recipe, ingredients and steps inserted successfully.');
+                        // Redirect to the newly created recipe page
+                        window.location.href = 'recipe.html?id=' + encodeURIComponent(newRecipeId);
+
                     } catch (e) {
                         alert('Error saving recipe: ' + e.message);
                     } finally {
