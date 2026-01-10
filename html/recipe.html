@@ -198,7 +198,11 @@
             }
         })
 
-        app.use(Quasar)
+        app.use(Quasar, {
+            config: {
+                brand: { primary: 'purple'}
+            }
+        })
         Quasar.Lang.set(Quasar.Lang.enGB)
         app.mount('#app')
 
