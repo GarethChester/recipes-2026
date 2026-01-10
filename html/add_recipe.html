@@ -569,7 +569,7 @@ Return these as three distinct markdown code blocks.`;
 
                     const sqlString = (val) => {
                         if (val === null || val === undefined) return 'NULL';
-                        return "'" + String(val).replace(/'/g, "''") + "'";
+                        return "'" + String(val).replace(/'/g, "\'") + "'";
                     };
 
                     const runQuery = async (query) => {
