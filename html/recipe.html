@@ -144,6 +144,7 @@
                     error.value = null;
                     source_id = params.id ? params.id : 0
                     console.log(source_id)
+                    console.log("select sources.source_name, recipes.recipe_name, recipes.page, recipes.url, recipes.serves from `recipes-46d2e.recipes.recipes` recipes inner join `recipes-46d2e.recipes.sources` sources on recipes.source_id = sources.source_id where recipes.recipe_id = '" + id + "'")
                     try {
                         const response = await fetch(`https://bigquery.googleapis.com/bigquery/v2/projects/${PROJECT_ID}/queries`, {
                             method: 'POST',
