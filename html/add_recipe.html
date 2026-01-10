@@ -81,14 +81,14 @@
                             </q-file>
                         </div>
 
-                        <div class="col-12 col-md-6 flex items-center">
+                        <div class="col-12 col-md-6 flex items-center q-pa-md q-gutter-md">
                             <q-btn color="primary" text-color="white" label="Pull out details" :loading="loadingGemini"
                                 @click="sendToGemini" class="q-mb-md">
                                 <template v-slot:loader>
                                     <q-spinner-dots color="white" size="24px" />
                                 </template>
                             </q-btn>
-                            <q-btn color="primary" text-color="white" label="Save" :loading="saving" v-if="resultSource && selectedSource && (selectedSource.id != -1 || sourceName)"
+                            <q-btn color="primary" text-color="white" label="Save" :loading="saving" v-if="resultSource.name && selectedSource && (selectedSource.id != -1 || sourceName)"
                                 @click="saveRecipe" class="q-mb-md">
                                 <template v-slot:loader>
                                     <q-spinner-dots color="white" size="24px" />
