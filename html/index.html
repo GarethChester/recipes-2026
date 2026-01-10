@@ -132,19 +132,8 @@
                             <div class="row items-center">
                                 <div class="col">
                                     <a :href="'recipe.html?id=' + r.id" class="text-primary text-weight-medium table-row-title">{{ r.name }}</a>
-                                    <div class="row q-pa-md q-gutter-md">
-                                        <q-chip size="sm" icon="menu_book" text-color="white" color="purple" v-if="r.page">
-                                            {{ r.source_name }} p.{{ r.page}}
-                                        </q-chip>
-                                        <q-chip size="sm" icon="language" text-color="white" color="purple" v-else>
-                                            {{ r.source_name }}
-                                        </q-chip>
-                                        <q-chip size="sm" icon="schedule" text-color="white" color="purple">
-                                            {{ r.cooking_time_minutes }} mins
-                                        </q-chip>
-                                        <q-chip size="sm" text-color="white" color="purple">
-                                            Difficulty: <q-rating v-model="r.effort_rating" size="0.75em" color="white" readonly></q-rating>                                            
-                                        </q-chip>
+                                    <div class="text-caption text-grey">
+                                        {{r.source_name}}<span v-if="r.page">, p.{{ r.page }}</span>
                                     </div>
                                 </div>
                             </div>
