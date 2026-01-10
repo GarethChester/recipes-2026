@@ -28,6 +28,14 @@
       .q-field__native { min-height: 44px !important; }
       .q-page-container { padding-left: 12px !important; padding-right: 12px !important; }
     }
+
+    /* Title/subtitle alignment helpers */
+    .recipe-subtitle { display:inline-flex; align-items:flex-end; margin-left:16px; }
+
+    @media (max-width: 768px) {
+      .recipe-title { font-size: 1.25rem !important; }
+      .recipe-subtitle { display:block !important; margin-left:0 !important; font-size: 1rem !important; margin-top:0.25rem; }
+    }
     </style>
 </head>
 
@@ -54,10 +62,9 @@
                     <div class="row q-col-gutter-md q-row-gutter-md">
                         <div class="col-12">
                             <div class="col">
-                                <div class="text-weight-medium text-h4">{{ rows[0].name }}</div>
-                                <div class="row text-weight-light text-primary text-h5" style="display:inline-flex; align-items:flex-end; margin-left: 16px;">
-                                     from
-                                    {{ rows[0].source }}
+                                <div class="recipe-title text-weight-medium text-h4">{{ rows[0].name }}</div>
+                                <div class="recipe-subtitle text-weight-light text-primary text-h5">
+                                    from {{ rows[0].source }}
                                     <span v-if="rows[0].page">, p.{{ rows[0].page }}</span>
                                     <a v-else :href="rows[0].url"><q-icon name="link"></q-icon></a>
                                 </div>
@@ -338,7 +345,7 @@
                     }
                 };
 
-                return { isLoggedIn, loading, error, rows, schema, searchText, handleAuthClick, logout, executeTemplate, stepsRows, stepsSchema, ingredientRows, ingredientSchema};
+                return { isLoggedIn, loading, error, rows, schema, searchText, handleAuthClick, logout, executeTemplate, stepsRows, stepsSchema, ingredientRows, ingredientSchema, isMobile, mobileTab };
             }
         })
 
