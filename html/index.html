@@ -103,9 +103,9 @@
                                     <div class="col">
                                         <a :href="'recipe.html?id=' + props.row.id">{{props.row.name}}</a>
                                         <div class="row italic text-grey">
-                                            <q-chip v-if="props.row.page">{{ props.row.source }} p.{{ props.row.page}}</q-chip>
-                                            <q-chip v-else>{{ props.row.source }}</q-chip>
-                                            <q-chip icon="clock">{{ props.row.cooking_time_minutes }} mins</q-chip>
+                                            <q-chip icon="menu_book" v-if="props.row.page">{{ props.row.source_name }} p.{{ props.row.page}}</q-chip>
+                                            <q-chip icon="globe" v-else>{{ props.row.source_name }}</q-chip>
+                                            <q-chip icon="nest_clock_farsight_analog">{{ props.row.cooking_time_minutes }} mins</q-chip>
                                             <q-rating v-model="props.row.effort_rating" size="2em" color="purple" readonly></q-rating>
                                         </div>
                                     </div>
@@ -127,9 +127,9 @@
                                 <div class="col">
                                     <a :href="'recipe.html?id=' + r.id" class="text-primary text-weight-medium table-row-title">{{ r.name }}</a>
                                     <div class="row italic text-grey text-caption">
-                                            <q-chip v-if="r.page">{{ r.source }} p.{{ r.page}}</q-chip>
-                                            <q-chip v-else>{{ r.source }}</q-chip>
-                                            <q-chip icon="clock">{{ r.cooking_time_minutes }} mins</q-chip>
+                                            <q-chip icon="menu_book" v-if="r.page">{{ r.source_name }} p.{{ r.page}}</q-chip>
+                                            <q-chip icon="globe" v-else>{{ r.source_name }}</q-chip>
+                                            <q-chip icon="nest_clock_farsight_analog">{{ r.cooking_time_minutes }} mins</q-chip>
                                             <q-rating v-model="r.effort_rating" size="1em" color="purple" readonly></q-rating>
                                         </div>
                                 </div>
