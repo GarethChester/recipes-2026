@@ -141,14 +141,14 @@
                                         { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
                                         { name: 'ingredient', label: 'Ingredient', field: 'ingredient', align: 'left' },
                                         { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' },
-                                        { name: 'order', label: 'Order', field: 'order', align: 'left' },
+                                        { name: 'position', label: 'Position', field: 'position', align: 'left' },
                                         { name: 'section', label: 'Section', field: 'section', align: 'left' },
                                         { name: 'actions', label: '', field: 'actions', align: 'right' }
                                     ]" title="Ingredients" rowsPerPage="20" sortBy="ingredient"
-                                    visible-columns="['order','section','amount','unit','ingredient','original_text','actions']" hide-header dense>
-                                    <template v-slot:body-cell-order="props">
+                                    visible-columns="['position','section','amount','unit','ingredient','original_text','actions']" hide-header dense>
+                                    <template v-slot:body-cell-position="props">
                                             <q-td :props="props">
-                                                <q-input dense outlined v-model="props.row.order" type="number" step="1"></q-input>
+                                                <q-input dense outlined v-model="props.row.position" type="number" step="1"></q-input>
                                             </q-td>
                                         </template>
                                         <template v-slot:body-cell-section="props">
@@ -580,7 +580,7 @@ OUTPUT SCHEMA:
 
     METADATA OBJECT: { "name": string, // Title Case "servings": number, // Use lowest value of range "page_number": number, "cooking_time_minutes": number, "effort_rating": number // 1-5 (allow halves) }
 
-    INGREDIENTS ARRAY: An array where each item is: { "order": number, // Integer, starting at 1, incrementing for every ingredient found "section": string, // Title Case (e.g., "For The Balti Paste"). Empty string if none. "amount": number, "unit": { "id": string, "name": string }, "ingredient": { "id": string, "name": string }, "original_text": string }
+    INGREDIENTS ARRAY: An array where each item is: { "position": number, // Integer, starting at 1, incrementing for every ingredient found "section": string, // Title Case (e.g., "For The Balti Paste"). Empty string if none. "amount": number, "unit": { "id": string, "name": string }, "ingredient": { "id": string, "name": string }, "original_text": string }
 
     Use these Units: + JSON.stringify(unitOptions) +
 
@@ -810,12 +810,12 @@ Return these as three distinct markdown code blocks.`;
                         await runQuery(insertRecipeQ);
 
                         // 4) Insert recipe ingredients
-                        var insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text, section, order) VALUES `
+                        var insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text, section, position) VALUES `
                         for (let i = 0; i < resultIngredients.value.length; i++) {
                             const row = resultIngredients.value[i];
                             const amountVal = sqlNum(row.amount);
                             const orig = row.original_text || '';
-                            insertIngQ = insertIngQ + `(${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)}, ${sqlString(row.section || '')}, ${row.order || (i + 1)})`;
+                            insertIngQ = insertIngQ + `(${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)}, ${sqlString(row.section || '')}, ${row.position || (i + 1)})`;
                             if (i < resultIngredients.value.length - 1) {
                                 insertIngQ = insertIngQ + ', ';
                             }

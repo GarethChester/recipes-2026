@@ -320,7 +320,7 @@
                                 'Content-Type': 'application/json'
                             },
                             body: JSON.stringify({
-                                query: "select original_text from `recipes-46d2e.recipes.recipe_ingredients` where recipe_id = '" + recipe_id + "'",   
+                                query: "select original_text, position, section from `recipes-46d2e.recipes.recipe_ingredients` where recipe_id = '" + recipe_id + "'",   
                                 useLegacySql: false
                             })
                         });
