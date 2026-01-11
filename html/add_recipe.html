@@ -790,22 +790,30 @@ Return these as three distinct markdown code blocks.`;
                         await runQuery(insertRecipeQ);
 
                         // 4) Insert recipe ingredients
+                        var insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text) VALUES `
                         for (let i = 0; i < resultIngredients.value.length; i++) {
                             const row = resultIngredients.value[i];
                             const amountVal = sqlNum(row.amount);
                             const orig = row.original_text || '';
-                            const insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text) VALUES (${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)})`;
-                            await runQuery(insertIngQ);
+                            insertIngQ = insertIngQ + `(${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)})`;
+                            if (i < resultIngredients.value.length - 1) {
+                                insertIngQ = insertIngQ + ', ';
+                            }
                         }
-
+                        await runQuery(insertIngQ);
+                        
+                        var insertStepQ = `INSERT INTO \`recipes-46d2e.recipes.steps\` (recipe_id, step_no, step_text) VALUES `
                         // 5) Insert steps
                         for (let i = 0; i < resultSteps.value.length; i++) {
                             const st = resultSteps.value[i];
                             const stepNum = sqlNum(st.step || (i + 1));
                             const instr = st.instruction || '';
-                            const insertStepQ = `INSERT INTO \`recipes-46d2e.recipes.steps\` (recipe_id, step_no, step_text) VALUES (${sqlString(newRecipeId)}, ${stepNum}, ${sqlString(instr)})`;
-                            await runQuery(insertStepQ);
+                            insertStepQ = insertStepQ + `(${sqlString(newRecipeId)}, ${stepNum}, ${sqlString(instr)})`;
+                            if (i < resultSteps.value.length - 1) {
+                                insertStepQ = insertStepQ + ', ';
+                            }
                         }
+                        await runQuery(insertStepQ);
 
                         alert('Recipe, ingredients and steps inserted successfully.');
                         // Redirect to the newly created recipe page
