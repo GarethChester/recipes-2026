@@ -141,9 +141,21 @@
                                         { name: 'unit', label: 'Unit', field: 'unit', align: 'left' },
                                         { name: 'ingredient', label: 'Ingredient', field: 'ingredient', align: 'left' },
                                         { name: 'original_text', label: 'Original Text', field: 'original_text', align: 'left' },
+                                        { name: 'order', label: 'Order', field: 'order', align: 'left' },
+                                        { name: 'section', label: 'Section', field: 'section', align: 'left' },
                                         { name: 'actions', label: '', field: 'actions', align: 'right' }
                                     ]" title="Ingredients" rowsPerPage="20" sortBy="ingredient"
-                                    visible-columns="['amount','unit','ingredient','original_text','actions']" hide-header dense>
+                                    visible-columns="['order','section','amount','unit','ingredient','original_text','actions']" hide-header dense>
+                                    <template v-slot:body-cell-order="props">
+                                            <q-td :props="props">
+                                                <q-input dense outlined v-model="props.row.order" type="number" step="1"></q-input>
+                                            </q-td>
+                                        </template>
+                                        <template v-slot:body-cell-section="props">
+                                            <q-td :props="props">
+                                                <q-input dense outlined v-model="props.row.section" type="text"></q-input>
+                                            </q-td>
+                                        </template>                                   
                                         <template v-slot:body-cell-amount="props">
                                             <q-td :props="props">
                                                 <q-input dense outlined v-model="props.row.amount" type="number" step="0.01"></q-input>
