@@ -507,64 +507,74 @@
                             };
                         })
                     );
-                    const text = `Extract data from the provided image into exactly 3 separate JSON objects. 
+                    const text = `Extract data from the provided image into exactly 3 separate JSON objects.
+CONSTRAINTS & LOGIC:
 
-### CONSTRAINTS:
-- Any mention of 'a couple' means 2
-- Do not nest these into a single root object.
-- Use decimal format for all numbers.
-- SERVINGS: If a range is provided (e.g., "4-6"), take the LOWEST value.
-- **"OR" INGREDIENTS (CRITICAL)**: If an ingredient line provides an alternative using "or" (e.g., "1lb fresh spinach... or 1/2lb frozen"), you MUST:
-  1. Extract the **amount** and **name** of the FIRST (primary) option only.
-  2. Map the ID based on this first option.
-  3. Keep the ENTIRE text (including the "or" and the alternative) in the "original_text" field.
-- **TOTAL TIME ESTIMATION (CRITICAL)**: 
-  1. Identify ALL distinct cooking stages (e.g., Stovetop Simmering, Oven Baking, Resting).
-  2. If these stages happen one after the other (sequential), you MUST SUM them.
-  1. If no explicit time is listed, you MUST estimate based on the instructions.
-  3. HEURISTIC RULES: 
-     - "Until onions brown/soften": +8 minutes.
-     - "Until meat is cooked through/browned": +10 minutes.
-     - "Simmer to reduce": +15 minutes.
-     - "Bring to a boil": +5 minutes.
-     - Any other instructions please estimate accordingly
-  4. MANDATORY: Add estimated prep time for ingredient descriptors (e.g., "finely chopped" = 3 mins per item).
-  5. Final "cooking_time_minutes" must be a single integer representing (Prep + Active Cook Time).
-  6. Include any marinating time, but if the marination is "overnight" consider this to be 0 minutes of action time
-  7. If the recipe has no time estimates at all, you MUST provide a reasonable total time based on the steps.
-- EFFORT RATING: Out of 5 (allow halves). Higher ratings for recipes with many "until [state]" instructions as they require more attention.
-- For ingredients: use singular nouns, remove prep (e.g., 'lamb' not 'ground lamb'), but keep 'black pepper', 'white pepper', and 'bell pepper'. 'Pepper' with no qualifiers is 'black pepper'.
-- If 'salt and pepper' is listed, treat as two ingredients: 'salt' and 'black pepper' (and split the original text to match). Do the same for 'seasoning to taste' or similar.
-- If an ingredient line has 'or' then treat that as one ingredient, using the first option to fill the name, amount and unit.
-- **IMPORTANT**: Every ID must be a string enclosed in double quotes (e.g., "550e8400-e29b-41d4-a716-446655440000").
+    TEXT PROCESSING:
 
+        Title Case: Ensure the "name" in Metadata and all "section" fields in Ingredients are formatted in Title Case (e.g., "For the Balti Paste", not "FOR THE BALTI PASTE").
 
-### OUTPUT SCHEMA:
-1. METADATA OBJECT:
-{ 
-  "name": string, 
-  "servings": number, 
-  "page_number": number,
-  "cooking_time_minutes": number,
-  "effort_rating": number
-}
+        Numbers: Use decimal format for all numbers.
 
-2. INGREDIENTS ARRAY:
-An array where each item is:
-{
-  "amount": number,
-  "unit": { "id": string, "name": string },
-  "ingredient": { "id": string, "name": string },
-  "original_text": string
-}
-- Use these Units: ` + JSON.stringify(unitOptions)  + `
-- Use these Ingredients: ` + JSON.stringify(ingredientOptions) + `
-- MATCHING LOGIC: 
-  - If a unit or ingredient is found in the lists above, use the exact "id" and "name" from the list.
-  - If it is NOT in the list, you MUST use -1 for the "id" and the **actual ingredient name with preparation removed (e.g., 'lamb' not 'ground lamb') you found in the recipe** for the "name". Do not use the phrase "extracted name".
+        "A couple": Interpret as 2.
 
-3. STEPS ARRAY:
-An array where each item is: { "step": number, "instruction": string }
+    INGREDIENT EXTRACTION:
+
+        Reading Order: If ingredients are listed in columns, read them LEFT-TO-RIGHT. Process the main column first, then secondary columns (e.g., Pastes, Marinades).
+
+        Sections: Capture sub-headings (e.g., "For The Balti Paste", "To Serve") in the "section" field. If an ingredient is under the main title with no sub-heading, "section" should be an empty string "".
+
+        Optional/Serving: You MUST include ingredients listed under "To Serve", "Garnish", or "Optional".
+
+        "OR" Ingredients: If a line offers an alternative (e.g., "1 cinnamon stick or 1 tsp ground"), you must:
+
+            Extract Amount/Name for the FIRST option only.
+
+            Keep the ENTIRE text in "original_text".
+
+        Salt/Pepper: "Salt and pepper" = 2 separate items. "Seasoning to taste" = 2 items (salt, black pepper).
+
+    TIME ESTIMATION (CRITICAL):
+
+        Identify all sequential stages (Prep -> Marinate -> Cook -> Rest).
+
+        Prep Time: Add estimated prep time for descriptors (e.g., "finely chopped" = 3 mins per item).
+
+        Marination: Include in total time (unless "overnight", then 0).
+
+        Heuristics (if no time listed):
+
+            "Until onions brown/soften": +8 mins
+
+            "Until meat is cooked": +10 mins
+
+            "Simmer to reduce": +15 mins
+
+            "Boil": +5 mins
+
+            "Garam masala/spices at end": +3 mins
+
+        Final Total: Sum of (Prep + Active Cook + Marinate).
+
+    IDS & MAPPING:
+
+        Use the provided unitOptions and ingredientOptions lists.
+
+        If found: Use exact "id" and "name".
+
+        If NOT found: Use "id": "-1" and extract the clean name (singular, no prep).
+
+OUTPUT SCHEMA:
+
+    METADATA OBJECT: { "name": string, // Title Case "servings": number, // Use lowest value of range "page_number": number, "cooking_time_minutes": number, "effort_rating": number // 1-5 (allow halves) }
+
+    INGREDIENTS ARRAY: An array where each item is: { "order": number, // Integer, starting at 1, incrementing for every ingredient found "section": string, // Title Case (e.g., "For The Balti Paste"). Empty string if none. "amount": number, "unit": { "id": string, "name": string }, "ingredient": { "id": string, "name": string }, "original_text": string }
+
+    Use these Units: + JSON.stringify(unitOptions) +
+
+    Use these Ingredients: + JSON.stringify(ingredientOptions) +
+
+    STEPS ARRAY: An array where each item is: { "step": number, "instruction": string }
 
 Return these as three distinct markdown code blocks.`;
 
@@ -788,12 +798,12 @@ Return these as three distinct markdown code blocks.`;
                         await runQuery(insertRecipeQ);
 
                         // 4) Insert recipe ingredients
-                        var insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text) VALUES `
+                        var insertIngQ = `INSERT INTO \`recipes-46d2e.recipes.recipe_ingredients\` (recipe_id, ingredient_id, unit_id, amount, original_text, section, order) VALUES `
                         for (let i = 0; i < resultIngredients.value.length; i++) {
                             const row = resultIngredients.value[i];
                             const amountVal = sqlNum(row.amount);
                             const orig = row.original_text || '';
-                            insertIngQ = insertIngQ + `(${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)})`;
+                            insertIngQ = insertIngQ + `(${sqlString(newRecipeId)}, ${sqlString(row.ingredient.id)}, ${sqlString(row.unit ? row.unit.id : null)}, ${amountVal}, ${sqlString(orig)}, ${sqlString(row.section || '')}, ${row.order || (i + 1)})`;
                             if (i < resultIngredients.value.length - 1) {
                                 insertIngQ = insertIngQ + ', ';
                             }
